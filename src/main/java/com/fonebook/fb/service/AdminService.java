@@ -47,4 +47,11 @@ public class AdminService {
         manager.getManagedCliques().removeIf(c -> c.getId().equals(cliqueId));
         userRepository.save(manager);
     }
+
+    public Clique createClique(String name, String description) {
+        Clique clique = new Clique();
+        clique.setName(name);
+        clique.setDescription(description);
+        return cliqueRepository.save(clique);
+    }
 }

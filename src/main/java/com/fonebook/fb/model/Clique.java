@@ -3,6 +3,8 @@ package com.fonebook.fb.model;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -27,6 +29,7 @@ public class Clique {
     private String name;
     private String description;
 
+    @JsonIgnore
     @ManyToMany(mappedBy = "managedCliques")
     private Set<User> managers = new HashSet<>();
 }
