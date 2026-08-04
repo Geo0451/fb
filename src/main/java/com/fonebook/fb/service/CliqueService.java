@@ -1,11 +1,11 @@
-package com.fonebook.service;
+package com.fonebook.fb.service;
 
 import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import com.fonebook.model.Clique;
-import com.fonebook.repository.CliqueRepository;
+import com.fonebook.fb.model.Clique;
+import com.fonebook.fb.repository.CliqueRepository;
 
 import lombok.RequiredArgsConstructor;
 @Service

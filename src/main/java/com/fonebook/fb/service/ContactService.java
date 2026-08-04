@@ -1,16 +1,16 @@
-package com.fonebook.service;
+package com.fonebook.fb.service;
 
 import java.util.List;
 
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
-import com.fonebook.model.Clique;
-import com.fonebook.model.Contact;
-import com.fonebook.model.User;
-import com.fonebook.repository.CliqueRepository;
-import com.fonebook.repository.ContactRepository;
-import com.fonebook.repository.UserRepository;
+import com.fonebook.fb.model.Clique;
+import com.fonebook.fb.model.Contact;
+import com.fonebook.fb.model.User;
+import com.fonebook.fb.repository.CliqueRepository;
+import com.fonebook.fb.repository.ContactRepository;
+import com.fonebook.fb.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
 

@@ -1,12 +1,12 @@
-package com.fonebook.service;
+package com.fonebook.fb.service;
 
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.fonebook.model.User;
-import com.fonebook.repository.UserRepository;
-import com.fonebook.security.JwtUtil;
+import com.fonebook.fb.model.User;
+import com.fonebook.fb.repository.UserRepository;
+import com.fonebook.fb.security.JwtUtil;
 
 import lombok.RequiredArgsConstructor;
 

@@ -1,4 +1,4 @@
-package com.fonebook.security;
+package com.fonebook.fb.security;
 
 import java.util.Date;
 
