@@ -16,4 +16,10 @@ public class CliqueService {
     public List<Clique> getAllCliques() {
         return cliqueRepository.findAll();
     }
+
+    public List<Clique> getCliquesByName(String name) {
+        return cliqueRepository.findByName(name.trim());
+    }
+
+    
 }

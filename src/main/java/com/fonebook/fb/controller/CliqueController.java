@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fonebook.fb.model.Clique;
@@ -19,7 +20,10 @@ public class CliqueController {
     private final CliqueService cliqueService;
 
     @GetMapping
-    public List<Clique> getAllCliques() {
+    public List<Clique> getCliques(@RequestParam(required = false) String name) {
+        if (name != null) {
+            return cliqueService.getCliquesByName(name.trim());
+        }
         return cliqueService.getAllCliques();
     }
 }

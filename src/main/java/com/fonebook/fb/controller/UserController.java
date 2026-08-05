@@ -20,15 +20,13 @@ public class UserController {
 
     private final UserService userService;
 
+    // GET /api/managers?name=Test Admin
     @GetMapping
-    public List<User> getAllUsers() {
+    public List<User> searchUsers(@RequestParam(required = false) String name) {
+        if (name != null) {
+            return userService.getUsersByName(name.trim());
+        }
         return userService.getAllUsers();
-    }
-
-    @GetMapping("/search")
-    public List<User> getUsersByName(@RequestParam String name) {
-        name = name.trim();
-        return userService.getUsersByName(name);
     }
 
 }
