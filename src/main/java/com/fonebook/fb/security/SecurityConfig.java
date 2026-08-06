@@ -33,7 +33,7 @@ public SecurityFilterChain filterChain(HttpSecurity http, JwtAuthFilter jwtAuthF
         .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         .authorizeHttpRequests(auth -> auth
             .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-            .requestMatchers(HttpMethod.GET, "/api/contacts/**", "/api/cliques/**").permitAll()
+            .requestMatchers(HttpMethod.GET, "/api/contacts/**", "/api/cliques/**","/api/managers/**").permitAll()
             .requestMatchers("/api/auth/login").permitAll()
             .anyRequest().authenticated()
         )

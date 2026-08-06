@@ -8,6 +8,7 @@ import com.fonebook.fb.model.User;
 import com.fonebook.fb.repository.CliqueRepository;
 import com.fonebook.fb.repository.UserRepository;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -27,7 +28,11 @@ public class AdminService {
         return userRepository.save(manager);
     }
 
+    @Transactional
     public void deleteManager(Long managerId) {
+        if (!userRepository.existsById(managerId)) {
+            throw new IllegalArgumentException("Manager not found with id: " + managerId);
+        }
         userRepository.deleteById(managerId);
     }
 

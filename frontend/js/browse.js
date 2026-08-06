@@ -8,6 +8,7 @@ const cardgridEl = document.getElementById("cardgrid");
 const titleEl = document.getElementById("stageTitle");
 const descEl = document.getElementById("stageDesc");
 const searchEl = document.getElementById("search");
+const cliqueSearchEl = document.getElementById("cliqueSearch");
 
 let cliques = [];
 let activeId = null;
@@ -21,29 +22,41 @@ function escapeHtml(s) {
 }
 
 async function init() {
+  cliqueSearchEl.disabled = true;
   rolodexEl.innerHTML = `<div class="rolodex-empty">Fetching cliques…</div>`;
+  await loadCliques();
+  cliqueSearchEl.disabled = false;
+}
+
+async function loadCliques(query) {
   try {
-    cliques = await Api.listCliques();
+    cliques = await Api.listCliques(query);
   } catch (err) {
     rolodexEl.innerHTML = `<div class="rolodex-empty">Couldn't load cliques.<br>${escapeHtml(err.message)}</div>`;
-    titleEl.textContent = "Nothing to show";
     return;
   }
+  renderTabs(query);
+}
 
+function renderTabs(query) {
   if (!cliques.length) {
-    rolodexEl.innerHTML = `<div class="rolodex-empty">No cliques yet. An admin can create one.</div>`;
-    titleEl.textContent = "No cliques yet";
+    rolodexEl.innerHTML = query
+      ? `<div class="rolodex-empty">No cliques match “${escapeHtml(query)}.”</div>`
+      : `<div class="rolodex-empty">No cliques yet. An admin can create one.</div>`;
+    titleEl.textContent = query ? "No matches" : "No cliques yet";
     descEl.textContent = "";
+    cardgridEl.innerHTML = "";
+    searchEl.disabled = true;
     return;
   }
 
   rolodexEl.innerHTML = cliques
     .map(
       (c, i) => `
-      <button class="tab" role="tab" data-id="${c.id}" style="--tab-color:${TAB_COLORS[i % 2]}" aria-selected="false">
+      <button class="tab" role="tab" data-id="${c.id}" style="--tab-color:${TAB_COLORS[i % 2]}" aria-selected="${c.id === activeId}">
         <span class="dot"></span>
         <span>${escapeHtml(c.name)}</span>
-        <span class="count" id="count-${c.id}"></span>
+        <span class="count" id="count-${c.id}">${contactsCache[c.id] ? contactsCache[c.id].length : ""}</span>
       </button>`
     )
     .join("");
@@ -52,10 +65,17 @@ async function init() {
     tab.addEventListener("click", () => selectClique(Number(tab.dataset.id)));
   });
 
-  animate(rolodexEl.querySelectorAll(".tab"), { opacity: [0, 1], x: [-16, 0] }, { delay: stagger(0.05), duration: 0.4, easing: "ease-out" });
+  animate(rolodexEl.querySelectorAll(".tab"), { opacity: [0, 1], x: [-16, 0] }, { delay: stagger(0.05), duration: 0.35, easing: "ease-out" });
 
-  selectClique(cliques[0].id);
+  // keep the current clique selected across a search if it's still in the results;
+  // otherwise fall back to the top result.
+  if (!(activeId && cliques.some((c) => c.id === activeId))) {
+    selectClique(cliques[0].id);
+  }
 }
+
+const runCliqueSearch = debounce((q) => loadCliques(q || undefined), 300);
+cliqueSearchEl.addEventListener("input", () => runCliqueSearch(cliqueSearchEl.value.trim()));
 
 async function selectClique(id, { skipFlip = false } = {}) {
   activeId = id;

@@ -19,9 +19,12 @@ const deleteForm = document.getElementById("deleteForm");
 const deleteErr = document.getElementById("deleteErr");
 
 const sessionLogEl = document.getElementById("sessionLog");
+const dirSearchEl = document.getElementById("dirSearch");
+const directoryTableEl = document.getElementById("directoryTable");
 
-let logEntries = []; // {type, text, tag}
+let logEntries = []; // {tag, text} — session only, just an activity feed
 let cliqueOptions = [];
+let lastManagerResults = [];
 
 function escapeHtml(s) {
   return (s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
@@ -34,7 +37,7 @@ function pushLog(tag, text) {
 
 function renderLog() {
   if (!logEntries.length) {
-    sessionLogEl.innerHTML = `<div class="empty-state"><strong>Nothing logged yet</strong>Create a manager or clique above to see it here.</div>`;
+    sessionLogEl.innerHTML = `<div class="empty-state"><strong>Nothing yet</strong>Create a clique or change access above to see it here.</div>`;
     return;
   }
   sessionLogEl.innerHTML = logEntries
@@ -44,6 +47,85 @@ function renderLog() {
   if (rows[0]) animate(rows[0], { opacity: [0, 1], x: [-10, 0] }, { duration: 0.3 });
 }
 
+/* ---------- manager directory, now backed by GET /api/admin/managers ---------- */
+
+async function loadManagers(query) {
+  directoryTableEl.innerHTML = `<div class="icard skel" style="height:120px;"></div>`;
+  try {
+    lastManagerResults = await Api.listManagers(query);
+  } catch (err) {
+    directoryTableEl.innerHTML = `<div class="empty-state"><strong>Couldn't load managers</strong>${escapeHtml(err.message)}</div>`;
+    return;
+  }
+  renderDirectory(query);
+}
+
+function renderDirectory(query) {
+  if (!lastManagerResults.length) {
+    directoryTableEl.innerHTML = query
+      ? `<div class="empty-state"><strong>No matches</strong>No manager's name matches “${escapeHtml(query)}.”</div>`
+      : `<div class="empty-state"><strong>No managers yet</strong>Create one above.</div>`;
+    return;
+  }
+
+  directoryTableEl.innerHTML = `
+    <table class="tbl">
+      <thead><tr><th>ID</th><th>Name</th><th>Email</th><th>Actions</th></tr></thead>
+      <tbody>
+        ${lastManagerResults
+          .map(
+            (m) => `
+          <tr>
+            <td class="idcell">#${m.id}</td>
+            <td>${escapeHtml(m.name)}</td>
+            <td>${escapeHtml(m.email)}</td>
+            <td class="actions">
+              <button class="btn btn-outline on-paper btn-sm" data-use-access="${m.id}">Use for access</button>
+              <button class="btn btn-outline on-paper btn-sm" data-use-delete="${m.id}">Use for delete</button>
+            </td>
+          </tr>`
+          )
+          .join("")}
+      </tbody>
+    </table>
+  `;
+
+  directoryTableEl.querySelectorAll("[data-use-access]").forEach((b) =>
+    b.addEventListener("click", () => {
+      document.getElementById("aManagerId").value = b.dataset.useAccess;
+      document.getElementById("aManagerId").focus();
+      document.getElementById("accessForm").scrollIntoView({ behavior: "smooth", block: "center" });
+    })
+  );
+  directoryTableEl.querySelectorAll("[data-use-delete]").forEach((b) =>
+    b.addEventListener("click", () => {
+      document.getElementById("dManagerId").value = b.dataset.useDelete;
+      document.getElementById("dManagerId").focus();
+      document.getElementById("deleteForm").scrollIntoView({ behavior: "smooth", block: "center" });
+    })
+  );
+}
+
+const runManagerSearch = debounce((q) => loadManagers(q || undefined), 300);
+dirSearchEl.addEventListener("input", () => {
+  // the endpoint searches by name; if someone types a pure number, treat it as
+  // an id lookup against whatever's already loaded rather than querying the server.
+  const raw = dirSearchEl.value.trim();
+  if (raw && /^\d+$/.test(raw)) {
+    const hit = lastManagerResults.filter((m) => String(m.id) === raw);
+    if (hit.length) {
+      const previous = lastManagerResults;
+      lastManagerResults = hit;
+      renderDirectory(raw);
+      lastManagerResults = previous;
+      return;
+    }
+  }
+  runManagerSearch(raw);
+});
+
+/* ---------- cliques (dropdown for access form) ---------- */
+
 async function loadCliqueOptions() {
   try {
     cliqueOptions = await Api.listCliques();
@@ -52,6 +134,8 @@ async function loadCliqueOptions() {
     cliqueSelect.innerHTML = `<option value="">Couldn't load cliques</option>`;
   }
 }
+
+/* ---------- forms ---------- */
 
 cliqueForm.addEventListener("submit", async (e) => {
   e.preventDefault();
@@ -89,6 +173,8 @@ managerForm.addEventListener("submit", async (e) => {
     toast(`Manager ${manager.name} created — id #${manager.id}.`);
     document.getElementById("aManagerId").value = manager.id;
     managerForm.reset();
+    dirSearchEl.value = "";
+    loadManagers();
   } catch (err) {
     managerErr.textContent = err.message;
     managerErr.classList.add("show");
@@ -144,6 +230,7 @@ deleteForm.addEventListener("submit", async (e) => {
     toast(`Manager #${managerId} deleted.`);
     pushLog("manager", `manager #${managerId} — deleted`);
     deleteForm.reset();
+    loadManagers(dirSearchEl.value.trim() || undefined);
   } catch (err) {
     deleteErr.textContent = err.status === 404 ? "That manager ID doesn't exist." : err.message;
     deleteErr.classList.add("show");
@@ -154,3 +241,4 @@ deleteForm.addEventListener("submit", async (e) => {
 });
 
 loadCliqueOptions();
+loadManagers();

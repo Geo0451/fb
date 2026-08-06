@@ -19,9 +19,7 @@ public class UserService {
     }
 
     public List<User> getUsersByName(String name) {
-        return userRepository.findByName(name)
-                .map(List::of)
-                .orElse(List.of());
+        return  userRepository.findByNameContainingIgnoreCase(name);
     }
     
 }

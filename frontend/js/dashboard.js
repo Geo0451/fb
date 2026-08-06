@@ -4,6 +4,7 @@ requireRole("MANAGER");
 renderNav(document.getElementById("nav"), "dashboard");
 
 const tabsEl = document.getElementById("cliqueTabs");
+const cliqueSearchEl = document.getElementById("cliqueSearch");
 const addPanel = document.getElementById("addPanel");
 const addPanelSub = document.getElementById("addPanelSub");
 const addForm = document.getElementById("addForm");
@@ -23,24 +24,40 @@ function escapeHtml(s) {
 }
 
 async function init() {
+  cliqueSearchEl.disabled = true;
   tabsEl.innerHTML = `<span style="font-family:var(--font-mono);font-size:13px;color:var(--paper-dim);">Loading cliques…</span>`;
+  await loadCliques();
+  cliqueSearchEl.disabled = false;
+}
+
+async function loadCliques(query) {
   try {
-    cliques = await Api.listCliques();
+    cliques = await Api.listCliques(query);
   } catch (err) {
     tabsEl.innerHTML = `<span style="font-family:var(--font-mono);color:var(--rose-light);">${escapeHtml(err.message)}</span>`;
     return;
   }
   if (!cliques.length) {
-    tabsEl.innerHTML = `<span style="font-family:var(--font-mono);font-size:13px;color:var(--paper-dim);">No cliques exist yet. Ask an admin to create one and assign you to it.</span>`;
+    tabsEl.innerHTML = query
+      ? `<span style="font-family:var(--font-mono);font-size:13px;color:var(--paper-dim);">No cliques match “${escapeHtml(query)}.”</span>`
+      : `<span style="font-family:var(--font-mono);font-size:13px;color:var(--paper-dim);">No cliques exist yet. Ask an admin to create one and assign you to it.</span>`;
+    addPanel.style.display = "none";
+    gridEl.innerHTML = "";
     return;
   }
   tabsEl.innerHTML = cliques
-    .map((c) => `<button class="dash-tab" data-id="${c.id}" aria-selected="false">${escapeHtml(c.name)}</button>`)
+    .map((c) => `<button class="dash-tab" data-id="${c.id}" aria-selected="${activeClique?.id === c.id}">${escapeHtml(c.name)}</button>`)
     .join("");
   tabsEl.querySelectorAll(".dash-tab").forEach((b) => b.addEventListener("click", () => selectClique(Number(b.dataset.id))));
   animate(tabsEl.querySelectorAll(".dash-tab"), { opacity: [0, 1], y: [8, 0] }, { delay: stagger(0.04), duration: 0.3 });
-  selectClique(cliques[0].id);
+
+  if (!(activeClique && cliques.some((c) => c.id === activeClique.id))) {
+    selectClique(cliques[0].id);
+  }
 }
+
+const runCliqueSearch = debounce((q) => loadCliques(q || undefined), 300);
+cliqueSearchEl.addEventListener("input", () => runCliqueSearch(cliqueSearchEl.value.trim()));
 
 async function selectClique(id) {
   activeClique = cliques.find((c) => c.id === id);

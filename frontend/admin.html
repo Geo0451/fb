@@ -43,7 +43,7 @@
 
   <section class="panel">
     <h2>Clique access</h2>
-    <p class="panel-sub">Assign or remove a manager's access to a clique. There's no lookup for existing manager IDs yet — pull one from the session log below, or enter one you already have on hand.</p>
+    <p class="panel-sub">Assign or remove a manager's access to a clique. Look their ID up in the directory below, or type one in directly.</p>
     <form id="accessForm" class="inline-form">
       <div class="field">
         <label for="aManagerId">Manager ID</label>
@@ -73,10 +73,20 @@
   </section>
 
   <section class="panel">
-    <h2>Session log</h2>
-    <p class="panel-sub">Fonebook has no endpoint yet to list managers, so this log — cleared when you leave the page — is the only record of IDs you've just created.</p>
+    <h2>Manager directory</h2>
+    <p class="panel-sub">Search by name — matching is server-side. A pure number searches by ID within the current results.</p>
+
+    <div class="dir-toolbar">
+      <input id="dirSearch" type="search" placeholder="Search by name or ID…">
+    </div>
+    <div id="directoryTable"></div>
+  </section>
+
+  <section class="panel">
+    <h2>Recent activity</h2>
+    <p class="panel-sub">Cliques created and access changes this session — cleared when you leave the page.</p>
     <div id="sessionLog">
-      <div class="empty-state"><strong>Nothing logged yet</strong>Create a manager or clique above to see it here.</div>
+      <div class="empty-state"><strong>Nothing yet</strong>Create a clique or change access above to see it here.</div>
     </div>
   </section>
 </main>

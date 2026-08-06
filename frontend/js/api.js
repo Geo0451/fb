@@ -7,6 +7,14 @@ const API_BASE = "http://localhost:8080";
 
 const TOKEN_KEY = "fonebook_token";
 
+function debounce(fn, wait = 300) {
+  let t;
+  return (...args) => {
+    clearTimeout(t);
+    t = setTimeout(() => fn(...args), wait);
+  };
+}
+
 /* ---------- token / session helpers ---------- */
 
 const Session = {
@@ -96,8 +104,9 @@ const Api = {
   },
 
   // cliques
-  listCliques() {
-    return request("/api/cliques");
+  listCliques(name) {
+    const qs = name ? `?name=${encodeURIComponent(name)}` : "";
+    return request(`/api/cliques${qs}`);
   },
   createClique(name, description) {
     return request("/api/admin/cliques", { method: "POST", auth: true, body: { name, description } });
@@ -118,6 +127,11 @@ const Api = {
   },
 
   // admin
+  listManagers(name) {
+    const trimmedName = name ? name.trim() : "";
+    const qs = trimmedName ? `?name=${encodeURIComponent(trimmedName)}` : "";
+    return request(`/api/managers${qs}`, { auth: true });
+  },
   createManager(name, email, password) {
     return request("/api/admin/managers", { method: "POST", auth: true, body: { name, email, password } });
   },
@@ -125,7 +139,7 @@ const Api = {
     return request(`/api/admin/managers/${managerId}`, { method: "DELETE", auth: true });
   },
   assignClique(managerId, cliqueId) {
-    return request("/api/admin/assign-clique", { method: "POST", auth: true, body: { managerId, cliqueId } });
+    return request("/api/admin  /assign-clique", { method: "POST", auth: true, body: { managerId, cliqueId } });
   },
   removeClique(managerId, cliqueId) {
     return request("/api/admin/remove-clique", { method: "POST", auth: true, body: { managerId, cliqueId } });
