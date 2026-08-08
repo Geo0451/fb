@@ -18,7 +18,7 @@ public class CliqueService {
     }
 
     public List<Clique> getCliquesByName(String name) {
-        return cliqueRepository.findByName(name.trim());
+        return cliqueRepository.findByNameContainingIgnoreCase(name);
     }
 
     

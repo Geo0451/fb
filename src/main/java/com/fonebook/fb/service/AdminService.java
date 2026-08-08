@@ -2,6 +2,8 @@ package com.fonebook.fb.service;
 
 import java.util.List;
 
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -34,16 +36,24 @@ public class AdminService {
     }
 
     @Transactional
-     public void deleteManager(Long managerId) {
+    public void deleteManager(Long managerId) {
         if (!userRepository.existsById(managerId)) {
             throw new IllegalArgumentException("Manager not found with id: " + managerId);
         }
-
+        
+        // prevent self-deletion
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        Long currentUserId = Long.valueOf(auth.getName());
+        
+        if (currentUserId.equals(managerId)) {
+            throw new IllegalStateException("You cannot delete yourself.");
+        }
+        
         // detach any contacts this manager authored so the FK doesn't block the delete
         List<Contact> authored = contactRepository.findByAddedById(managerId);
         authored.forEach(c -> c.setAddedBy(null));
         contactRepository.saveAll(authored);
-
+        
         userRepository.deleteById(managerId);
     }
 

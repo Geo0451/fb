@@ -9,4 +9,6 @@ import com.fonebook.fb.model.Clique;
 public interface CliqueRepository extends JpaRepository<Clique, Long> {
 
     public List<Clique> findByName(String name);
+
+    public List<Clique> findByNameContainingIgnoreCase(String name);
 }
