@@ -3,7 +3,18 @@
 // Talks to the Fonebook backend described in the API reference.
 // ============================================================
 
-const API_BASE = "http://localhost:8080";
+function resolveApiBase() {
+  if (typeof window === "undefined") return "http://localhost:8080";
+
+  const configuredBase = window.__FONEBOOK_API_BASE__ || window.localStorage.getItem("fonebook_api_base");
+  if (configuredBase) return configuredBase.replace(/\/+$/, "");
+
+  const hostname = window.location.hostname || "localhost";
+  const isLocalhost = hostname === "localhost" || hostname === "127.0.0.1" || hostname === "::1";
+  return isLocalhost ? `http://${hostname}:8080` : "http://localhost:8080";
+}
+
+const API_BASE = resolveApiBase();
 
 const TOKEN_KEY = "fonebook_token";
 
@@ -139,7 +150,7 @@ const Api = {
     return request(`/api/admin/managers/${managerId}`, { method: "DELETE", auth: true });
   },
   assignClique(managerId, cliqueId) {
-    return request("/api/admin  /assign-clique", { method: "POST", auth: true, body: { managerId, cliqueId } });
+    return request("/api/admin/assign-clique", { method: "POST", auth: true, body: { managerId, cliqueId } });
   },
   removeClique(managerId, cliqueId) {
     return request("/api/admin/remove-clique", { method: "POST", auth: true, body: { managerId, cliqueId } });

@@ -8,4 +8,5 @@ import com.fonebook.fb.model.Contact;
 
 public interface ContactRepository extends JpaRepository<Contact, Long> {
     List<Contact> findByClique_Id(Long cliqueId);
+    List<Contact> findByAddedById(Long addedById);
 }

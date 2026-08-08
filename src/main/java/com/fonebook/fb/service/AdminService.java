@@ -1,11 +1,15 @@
 package com.fonebook.fb.service;
 
+import java.util.List;
+
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.fonebook.fb.model.Clique;
+import com.fonebook.fb.model.Contact;
 import com.fonebook.fb.model.User;
 import com.fonebook.fb.repository.CliqueRepository;
+import com.fonebook.fb.repository.ContactRepository;
 import com.fonebook.fb.repository.UserRepository;
 
 import jakarta.transaction.Transactional;
@@ -18,6 +22,7 @@ public class AdminService {
     private final UserRepository userRepository;
     private final CliqueRepository cliqueRepository;
     private final PasswordEncoder passwordEncoder;
+    private final ContactRepository contactRepository;
 
     public User createManager(String name, String email, String rawPassword) {
         User manager = new User();
@@ -29,10 +34,16 @@ public class AdminService {
     }
 
     @Transactional
-    public void deleteManager(Long managerId) {
+     public void deleteManager(Long managerId) {
         if (!userRepository.existsById(managerId)) {
             throw new IllegalArgumentException("Manager not found with id: " + managerId);
         }
+
+        // detach any contacts this manager authored so the FK doesn't block the delete
+        List<Contact> authored = contactRepository.findByAddedById(managerId);
+        authored.forEach(c -> c.setAddedBy(null));
+        contactRepository.saveAll(authored);
+
         userRepository.deleteById(managerId);
     }
 
