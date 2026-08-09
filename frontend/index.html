@@ -1,50 +1,58 @@
 <!doctype html>
 <html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Fonebook — browse cliques</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;700;800;900&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/style.css">
-</head>
-<body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fonebook — browse cliques</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;700;800;900&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <nav class="topnav" id="nav"></nav>
+    <div style="height: 60px"></div>
 
-<nav class="topnav" id="nav"></nav>
-
-<header class="hero">
-  <div>
-    <h1>Every<br><em>clique,</em><br>on file.</h1>
-    <p>A shared directory for the groups you're part of. Pick a clique from the rolodex and flip through its contacts.</p>
-  </div>
-  <div class="hero-side">
-    <div><b>What's a clique?</b><br>A group — a church, a team, a club — with its own list of contacts.</div>
-    <br>
-    <div><b>Managing one?</b><br>Sign in to add, edit, or remove contacts for the cliques you run.</div>
-  </div>
-</header>
-
-<main class="directory">
-  <div class="rolodex-col">
-    <input class="clique-search" id="cliqueSearch" type="search" placeholder="Find a clique…" disabled>
-    <nav class="rolodex" id="rolodex" role="tablist" aria-label="Cliques"></nav>
-  </div>
-
-  <section class="card-stage" id="stage">
-    <div class="stage-head">
-      <div>
-        <h2 id="stageTitle">Loading…</h2>
-        <p id="stageDesc">&nbsp;</p>
+    <main class="directory">
+      <div class="rolodex-col">
+        <input
+          class="clique-search"
+          id="cliqueSearch"
+          type="search"
+          placeholder="Find a clique…"
+          disabled
+        />
+        <nav
+          class="rolodex"
+          id="rolodex"
+          role="tablist"
+          aria-label="Cliques"
+        ></nav>
       </div>
-      <input class="stage-search" id="search" type="search" placeholder="Filter by name or number…" disabled>
-    </div>
-    <div class="cardgrid" id="cardgrid"></div>
-  </section>
-</main>
 
-<footer class="foot">Fonebook — a directory for your cliques.</footer>
+      <section class="card-stage" id="stage">
+        <div class="stage-head">
+          <div>
+            <h2 id="stageTitle">Loading…</h2>
+            <p id="stageDesc">&nbsp;</p>
+          </div>
+          <input
+            class="stage-search"
+            id="search"
+            type="search"
+            placeholder="Filter by name or number…"
+            disabled
+          />
+        </div>
+        <div class="cardgrid" id="cardgrid"></div>
+      </section>
+    </main>
 
-<script src="js/api.js"></script>
-<script type="module" src="js/browse.js"></script>
-</body>
+    <footer class="foot">Fonebook — a directory for your cliques.</footer>
+
+    <script src="js/api.js"></script>
+    <script type="module" src="js/browse.js"></script>
+  </body>
 </html>
