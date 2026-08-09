@@ -41,7 +41,7 @@ function renderLog() {
     return;
   }
   sessionLogEl.innerHTML = logEntries
-    .map((e) => `<div class="log-row"><span>${e.text}</span><span class="tag">${e.tag}</span></div>`)
+    .map((e, i) => `<div class="log-row"${i === 0 ? ' style="opacity:0;transform:translateX(-10px);"' : ""}><span>${e.text}</span><span class="tag">${e.tag}</span></div>`)
     .join("");
   const rows = sessionLogEl.querySelectorAll(".log-row");
   if (rows[0]) animate(rows[0], { opacity: [0, 1], x: [-10, 0] }, { duration: 0.3 });

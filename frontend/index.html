@@ -1,60 +1,41 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Fonebook — browse cliques</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;700;800;900&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap"
-      rel="stylesheet"
-    />
-    <link rel="icon" type="image/svg+xml" href="favicon.svg" />
-    <link rel="stylesheet" href="css/style.css" />
-  </head>
-  <body>
-    <nav class="topnav" id="nav"></nav>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fonebook — browse cliques</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;700;800;900&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=optional" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
 
-    <div style="height: 20px"></div>
+<nav class="topnav" id="nav"></nav>
 
-    <main class="directory">
-      <div class="rolodex-col">
-        <input
-          class="clique-search"
-          id="cliqueSearch"
-          type="search"
-          placeholder="Find a clique…"
-          disabled
-        />
-        <nav
-          class="rolodex"
-          id="rolodex"
-          role="tablist"
-          aria-label="Cliques"
-        ></nav>
+<div style="height:40px"> </div>
+
+<main class="directory">
+  <div class="rolodex-col">
+    <input class="clique-search" id="cliqueSearch" type="search" placeholder="Find a clique…" disabled>
+    <nav class="rolodex" id="rolodex" role="tablist" aria-label="Cliques"></nav>
+  </div>
+
+  <section class="card-stage" id="stage">
+    <div class="stage-head">
+      <div>
+        <h2 id="stageTitle">Loading…</h2>
+        <p id="stageDesc">&nbsp;</p>
       </div>
+      <input class="stage-search" id="search" type="search" placeholder="Filter by name or number…" disabled>
+    </div>
+    <div class="cardgrid" id="cardgrid"></div>
+  </section>
+</main>
 
-      <section class="card-stage" id="stage">
-        <div class="stage-head">
-          <div>
-            <h2 id="stageTitle">Loading…</h2>
-            <p id="stageDesc">&nbsp;</p>
-          </div>
-          <input
-            class="stage-search"
-            id="search"
-            type="search"
-            placeholder="Filter by name or number…"
-            disabled
-          />
-        </div>
-        <div class="cardgrid" id="cardgrid"></div>
-      </section>
-    </main>
+<footer class="foot">Fonebook — a directory for your cliques.</footer>
 
-    <footer class="foot">Fonebook — a directory for your cliques.</footer>
-
-    <script src="js/api.js"></script>
-    <script type="module" src="js/browse.js"></script>
-  </body>
+<script src="js/api.js"></script>
+<script type="module" src="js/browse.js"></script>
+</body>
 </html>

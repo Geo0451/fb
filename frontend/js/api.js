@@ -3,21 +3,7 @@
 // Talks to the Fonebook backend described in the API reference.
 // ============================================================
 
-function resolveApiBase() {
-  if (typeof window === "undefined") return "http://localhost:8080";
-
-  const configuredBase =
-    window.__FONEBOOK_API_BASE__ ||
-    window.localStorage.getItem("fonebook_api_base");
-  if (configuredBase) return configuredBase.replace(/\/+$/, "");
-
-  const hostname = window.location.hostname || "localhost";
-  const isLocalhost =
-    hostname === "localhost" || hostname === "127.0.0.1" || hostname === "::1";
-  return isLocalhost ? `http://${hostname}:8080` : "http://localhost:8080";
-}
-
-const API_BASE = resolveApiBase();
+const API_BASE = "http://localhost:8080";
 
 const TOKEN_KEY = "fonebook_token";
 
@@ -63,7 +49,15 @@ const Session = {
   },
   logout() {
     this.clear();
-    window.location.href = "login.html";
+    // if we're calling this from an API error (not user-initiated), let the page know
+    if (window.location.pathname !== "/login.html") {
+      toast("Your session expired. Please sign in again.", { error: true });
+      setTimeout(() => {
+        window.location.href = "login.html";
+      }, 400);
+    } else {
+      window.location.href = "login.html";
+    }
   },
 };
 
@@ -99,6 +93,12 @@ async function request(path, { method = "GET", body, auth = false } = {}) {
     return text ? JSON.parse(text) : null;
   }
 
+  // token expired or invalid — log out immediately
+  if (res.status === 403 && auth) {
+    Session.logout();
+    return; // logout redirects, so this won't actually return
+  }
+
   let payload;
   try {
     payload = await res.json();
@@ -114,10 +114,7 @@ async function request(path, { method = "GET", body, auth = false } = {}) {
 const Api = {
   // auth
   login(email, password) {
-    return request("/api/auth/login", {
-      method: "POST",
-      body: { email, password },
-    });
+    return request("/api/auth/login", { method: "POST", body: { email, password } });
   },
 
   // cliques
@@ -126,15 +123,7 @@ const Api = {
     return request(`/api/cliques${qs}`);
   },
   createClique(name, description) {
-    return request("/api/admin/cliques", {
-      method: "POST",
-      auth: true,
-      body: { name, description },
-    });
-  },
-  listManagerCliques(managerId, name) {
-    const qs = name ? `?name=${encodeURIComponent(name)}` : "";
-    return request(`/api/managers/${managerId}/cliques${qs}`, { auth: true });
+    return request("/api/admin/cliques", { method: "POST", auth: true, body: { name, description } });
   },
 
   // contacts
@@ -142,58 +131,31 @@ const Api = {
     return request(`/api/contacts/clique/${cliqueId}`);
   },
   createContact({ cliqueId, name, phoneNumber, notes }) {
-    return request("/api/contacts", {
-      method: "POST",
-      auth: true,
-      body: { cliqueId, name, phoneNumber, notes },
-    });
+    return request("/api/contacts", { method: "POST", auth: true, body: { cliqueId, name, phoneNumber, notes } });
   },
   updateContact(contactId, { cliqueId, name, phoneNumber, notes }) {
-    return request(`/api/contacts/${contactId}`, {
-      method: "PUT",
-      auth: true,
-      body: { cliqueId, name, phoneNumber, notes },
-    });
+    return request(`/api/contacts/${contactId}`, { method: "PUT", auth: true, body: { cliqueId, name, phoneNumber, notes } });
   },
   deleteContact(contactId) {
-    return request(`/api/contacts/${contactId}`, {
-      method: "DELETE",
-      auth: true,
-    });
+    return request(`/api/contacts/${contactId}`, { method: "DELETE", auth: true });
   },
 
   // admin
   listManagers(name) {
-    const trimmedName = name ? name.trim() : "";
-    const qs = trimmedName ? `?name=${encodeURIComponent(trimmedName)}` : "";
+    const qs = name ? `?name=${encodeURIComponent(name)}` : "";
     return request(`/api/managers${qs}`, { auth: true });
   },
   createManager(name, email, password) {
-    return request("/api/admin/managers", {
-      method: "POST",
-      auth: true,
-      body: { name, email, password },
-    });
+    return request("/api/admin/managers", { method: "POST", auth: true, body: { name, email, password } });
   },
   deleteManager(managerId) {
-    return request(`/api/admin/managers/${managerId}`, {
-      method: "DELETE",
-      auth: true,
-    });
+    return request(`/api/admin/managers/${managerId}`, { method: "DELETE", auth: true });
   },
   assignClique(managerId, cliqueId) {
-    return request("/api/admin/assign-clique", {
-      method: "POST",
-      auth: true,
-      body: { managerId, cliqueId },
-    });
+    return request("/api/admin/assign-clique", { method: "POST", auth: true, body: { managerId, cliqueId } });
   },
   removeClique(managerId, cliqueId) {
-    return request("/api/admin/remove-clique", {
-      method: "POST",
-      auth: true,
-      body: { managerId, cliqueId },
-    });
+    return request("/api/admin/remove-clique", { method: "POST", auth: true, body: { managerId, cliqueId } });
   },
 };
 
@@ -209,26 +171,18 @@ function toast(message, { error = false } = {}) {
   const el = document.createElement("div");
   el.className = "toast" + (error ? " err" : "");
   el.textContent = message;
+  el.style.opacity = "0";
+  el.style.transform = "translateX(24px)";
   stack.appendChild(el);
 
   import("https://cdn.jsdelivr.net/npm/motion@11/+esm").then(({ animate }) => {
-    animate(
-      el,
-      { opacity: [0, 1], x: [24, 0] },
-      { duration: 0.35, easing: "ease-out" },
-    );
+    animate(el, { opacity: [0, 1], x: [24, 0] }, { duration: 0.35, easing: "ease-out" });
   });
 
   setTimeout(() => {
-    import("https://cdn.jsdelivr.net/npm/motion@11/+esm").then(
-      ({ animate }) => {
-        animate(
-          el,
-          { opacity: [1, 0], x: [0, 24] },
-          { duration: 0.3, easing: "ease-in" },
-        ).finished.then(() => el.remove());
-      },
-    );
+    import("https://cdn.jsdelivr.net/npm/motion@11/+esm").then(({ animate }) => {
+      animate(el, { opacity: [1, 0], x: [0, 24] }, { duration: 0.3, easing: "ease-in" }).finished.then(() => el.remove());
+    });
   }, 3600);
 }
 
@@ -237,34 +191,38 @@ function toast(message, { error = false } = {}) {
 function renderNav(mountEl, active) {
   const role = Session.role();
   const loggedIn = Session.isLoggedIn();
-  const payload = Session.payload();
-  const userName = payload?.name || "User";
-
   mountEl.innerHTML = `
     <a class="brand" href="index.html">
       ${dialSvg()}
       <span>FONEBOOK<small>clique directory</small></span>
     </a>
     <div class="navlinks">
-    
-      
-      
-      ${
-        loggedIn
-          ? `
-          <span style="font-family:var(--font-mono);font-size:13px;color:var(--paper-dim);">${userName}</span>
-          <span class="pill-role">${role === "ADMIN" ? "(Admin)" : "(Manager)"}</span>
+      <a href="index.html" ${active === "browse" ? 'style="color:var(--brass-light);border-color:var(--brass);"' : ""}>Browse</a>
+      ${loggedIn
+        ? `
+          <span class="pill-role">${role === "ADMIN" ? "Admin" : "Manager"}</span>
           ${role === "MANAGER" ? `<a href="dashboard.html" ${active === "dashboard" ? 'style="color:var(--brass-light);border-color:var(--brass);"' : ""}>Dashboard</a>` : ""}
           ${role === "ADMIN" ? `<a href="admin.html" ${active === "admin" ? 'style="color:var(--brass-light);border-color:var(--brass);"' : ""}>Admin</a>` : ""}
-          
           <button id="logoutBtn">Sign out</button>
         `
-          : `<a href="login.html" ${active === "login" ? 'style="color:var(--brass-light);border-color:var(--brass);"' : ""}>Sign in</a>`
+        : `<a href="login.html" ${active === "login" ? 'style="color:var(--brass-light);border-color:var(--brass);"' : ""}>Sign in</a>`
       }
     </div>
   `;
   const logoutBtn = mountEl.querySelector("#logoutBtn");
   if (logoutBtn) logoutBtn.addEventListener("click", () => Session.logout());
+
+  // manually restart the spin on click too, in case the brand link
+  // ever stops causing a full page reload (e.g. same-page click)
+  const brandEl = mountEl.querySelector(".brand");
+  const dialEl = brandEl?.querySelector(".dial");
+  if (brandEl && dialEl) {
+    brandEl.addEventListener("click", () => {
+      dialEl.style.animation = "none";
+      void dialEl.offsetWidth; // force reflow to allow the animation to restart
+      dialEl.style.animation = "";
+    });
+  }
 }
 
 function dialSvg() {
