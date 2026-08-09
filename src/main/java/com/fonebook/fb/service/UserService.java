@@ -1,6 +1,7 @@
 package com.fonebook.fb.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
@@ -20,6 +21,10 @@ public class UserService {
 
     public List<User> getUsersByName(String name) {
         return  userRepository.findByNameContainingIgnoreCase(name);
+    }
+
+    public Optional<User> findById(Long id) {
+        return userRepository.findById(id);
     }
     
 }

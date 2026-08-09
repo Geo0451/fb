@@ -20,7 +20,13 @@ let activeClique = null;
 let contacts = [];
 
 function escapeHtml(s) {
-  return (s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  return (s ?? "").replace(
+    /[&<>"']/g,
+    (c) =>
+      ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[
+        c
+      ],
+  );
 }
 
 async function init() {
@@ -29,27 +35,40 @@ async function init() {
   await loadCliques();
   cliqueSearchEl.disabled = false;
 }
-
 async function loadCliques(query) {
   try {
-    cliques = await Api.listCliques(query);
+    const managerId = Session.payload().sub; // current user ID from JWT
+    cliques = await Api.listManagerCliques(managerId, query);
   } catch (err) {
     tabsEl.innerHTML = `<span style="font-family:var(--font-mono);color:var(--rose-light);">${escapeHtml(err.message)}</span>`;
+    addPanel.style.display = "none";
+    gridEl.innerHTML = "";
     return;
   }
   if (!cliques.length) {
     tabsEl.innerHTML = query
-      ? `<span style="font-family:var(--font-mono);font-size:13px;color:var(--paper-dim);">No cliques match “${escapeHtml(query)}.”</span>`
-      : `<span style="font-family:var(--font-mono);font-size:13px;color:var(--paper-dim);">No cliques exist yet. Ask an admin to create one and assign you to it.</span>`;
+      ? `<span style="font-family:var(--font-mono);font-size:13px;color:var(--paper-dim);">No cliques match "${escapeHtml(query)}."</span>`
+      : `<span style="font-family:var(--font-mono);font-size:13px;color:var(--paper-dim);">You don't manage any cliques yet. Ask an admin to assign you to one.</span>`;
     addPanel.style.display = "none";
     gridEl.innerHTML = "";
     return;
   }
   tabsEl.innerHTML = cliques
-    .map((c) => `<button class="dash-tab" data-id="${c.id}" aria-selected="${activeClique?.id === c.id}">${escapeHtml(c.name)}</button>`)
+    .map(
+      (c) =>
+        `<button class="dash-tab" data-id="${c.id}" aria-selected="${activeClique?.id === c.id}">${escapeHtml(c.name)}</button>`,
+    )
     .join("");
-  tabsEl.querySelectorAll(".dash-tab").forEach((b) => b.addEventListener("click", () => selectClique(Number(b.dataset.id))));
-  animate(tabsEl.querySelectorAll(".dash-tab"), { opacity: [0, 1], y: [8, 0] }, { delay: stagger(0.04), duration: 0.3 });
+  tabsEl
+    .querySelectorAll(".dash-tab")
+    .forEach((b) =>
+      b.addEventListener("click", () => selectClique(Number(b.dataset.id))),
+    );
+  animate(
+    tabsEl.querySelectorAll(".dash-tab"),
+    { opacity: [0, 1], y: [8, 0] },
+    { delay: stagger(0.04), duration: 0.3 },
+  );
 
   if (!(activeClique && cliques.some((c) => c.id === activeClique.id))) {
     selectClique(cliques[0].id);
@@ -57,17 +76,24 @@ async function loadCliques(query) {
 }
 
 const runCliqueSearch = debounce((q) => loadCliques(q || undefined), 300);
-cliqueSearchEl.addEventListener("input", () => runCliqueSearch(cliqueSearchEl.value.trim()));
+cliqueSearchEl.addEventListener("input", () =>
+  runCliqueSearch(cliqueSearchEl.value.trim()),
+);
 
 async function selectClique(id) {
   activeClique = cliques.find((c) => c.id === id);
-  tabsEl.querySelectorAll(".dash-tab").forEach((b) => b.setAttribute("aria-selected", String(Number(b.dataset.id) === id)));
+  tabsEl
+    .querySelectorAll(".dash-tab")
+    .forEach((b) =>
+      b.setAttribute("aria-selected", String(Number(b.dataset.id) === id)),
+    );
 
   addPanel.style.display = "block";
   addPanelSub.textContent = `Filing into “${activeClique.name}.” If you're not assigned to this clique, saving will tell you.`;
   listTitle.textContent = `Contacts — ${activeClique.name}`;
   listSub.textContent = "Loading…";
-  gridEl.innerHTML = `<div class="icard skel" style="height:150px;"></div>`.repeat(3);
+  gridEl.innerHTML =
+    `<div class="icard skel" style="height:150px;"></div>`.repeat(3);
 
   try {
     contacts = await Api.listContacts(id);
@@ -97,18 +123,26 @@ function renderContacts() {
           <button class="btn btn-rose btn-sm" data-action="delete">Delete</button>
         </div>
       </div>
-    </article>`
+    </article>`,
     )
     .join("");
 
-  animate(gridEl.querySelectorAll(".icard"), { opacity: [0, 1], y: [12, 0] }, { delay: stagger(0.04), duration: 0.35 });
+  animate(
+    gridEl.querySelectorAll(".icard"),
+    { opacity: [0, 1], y: [12, 0] },
+    { delay: stagger(0.04), duration: 0.35 },
+  );
 
-  gridEl.querySelectorAll("[data-action='edit']").forEach((btn) =>
-    btn.addEventListener("click", () => enterEditMode(btn.closest(".icard")))
-  );
-  gridEl.querySelectorAll("[data-action='delete']").forEach((btn) =>
-    btn.addEventListener("click", () => handleDelete(btn.closest(".icard")))
-  );
+  gridEl
+    .querySelectorAll("[data-action='edit']")
+    .forEach((btn) =>
+      btn.addEventListener("click", () => enterEditMode(btn.closest(".icard"))),
+    );
+  gridEl
+    .querySelectorAll("[data-action='delete']")
+    .forEach((btn) =>
+      btn.addEventListener("click", () => handleDelete(btn.closest(".icard"))),
+    );
 }
 
 function enterEditMode(cardEl) {
@@ -159,7 +193,11 @@ async function handleDelete(cardEl) {
   if (!confirm(`Remove ${contact.name} from ${activeClique.name}?`)) return;
 
   try {
-    await animate(cardEl, { opacity: [1, 0], scale: [1, 0.94] }, { duration: 0.2 }).finished;
+    await animate(
+      cardEl,
+      { opacity: [1, 0], scale: [1, 0.94] },
+      { duration: 0.2 },
+    ).finished;
     await Api.deleteContact(id);
     contacts = contacts.filter((c) => c.id !== id);
     listSub.textContent = `${contacts.length} on file`;
@@ -172,7 +210,8 @@ async function handleDelete(cardEl) {
 }
 
 function explainErr(err) {
-  if (err.status === 403) return "You don't manage this clique yet — ask an admin to assign you to it.";
+  if (err.status === 403)
+    return "You don't manage this clique yet — ask an admin to assign you to it.";
   if (err.status === 404) return "That contact no longer exists.";
   return err.message;
 }
@@ -188,7 +227,12 @@ addForm.addEventListener("submit", async (e) => {
   const notes = document.getElementById("cNotes").value.trim();
 
   try {
-    const created = await Api.createContact({ cliqueId: activeClique.id, name, phoneNumber, notes });
+    const created = await Api.createContact({
+      cliqueId: activeClique.id,
+      name,
+      phoneNumber,
+      notes,
+    });
     contacts.push(created);
     listSub.textContent = `${contacts.length} on file`;
     renderContacts();
