@@ -269,16 +269,25 @@ function renderNav(mountEl, active) {
 
 function dialSvg() {
   return `
-  <svg class="dial" viewBox="0 0 40 40" fill="none">
-    <circle cx="20" cy="20" r="18" stroke="var(--brass-light)" stroke-width="2"/>
-    <circle cx="20" cy="8.5" r="2.4" fill="var(--brass-light)"/>
-    <circle cx="29.8" cy="13" r="2.4" fill="var(--brass-light)"/>
-    <circle cx="33.5" cy="20" r="2.4" fill="var(--brass-light)"/>
-    <circle cx="29.8" cy="27" r="2.4" fill="var(--brass-light)"/>
-    <circle cx="20" cy="31.5" r="2.4" fill="var(--brass-light)"/>
-    <circle cx="10.2" cy="27" r="2.4" fill="var(--brass-light)"/>
-    <circle cx="6.5" cy="20" r="2.4" fill="var(--brass-light)"/>
-    <circle cx="10.2" cy="13" r="2.4" fill="var(--brass-light)"/>
+  <svg class="dial" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <!-- solid brass wheel -->
+    <circle cx="20" cy="20" r="18" fill="var(--brass-light)"/>
+    <!-- notch where the finger stop breaks the rim -->
+    <path d="M32.9 25.4 L37.4 24.7 L35.6 29 Z" fill="var(--ink)"/>
+    <!-- finger stop tab, poking past the rim -->
+    <path d="M37.4 24.7 L35.6 29 L38.9 27.9 Z" fill="var(--brass-light)"/>
+    <!-- punched finger holes -->
+    <circle cx="20" cy="9" r="3" fill="var(--ink)"/>
+    <circle cx="27.8" cy="12.2" r="3" fill="var(--ink)"/>
+    <circle cx="31" cy="20" r="3" fill="var(--ink)"/>
+    <circle cx="27.8" cy="27.8" r="3" fill="var(--ink)"/>
+    <circle cx="20" cy="31" r="3" fill="var(--ink)"/>
+    <circle cx="12.2" cy="27.8" r="3" fill="var(--ink)"/>
+    <circle cx="9" cy="20" r="3" fill="var(--ink)"/>
+    <circle cx="12.2" cy="12.2" r="3" fill="var(--ink)"/>
+    <!-- center hub -->
+    <circle cx="20" cy="20" r="3.6" fill="var(--ink)"/>
+    <circle cx="20" cy="20" r="1.2" fill="var(--brass-light)"/>
   </svg>`;
 }
 
