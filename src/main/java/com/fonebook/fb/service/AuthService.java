@@ -26,6 +26,6 @@ public class AuthService {
             throw new AccessDeniedException("Invalid email or password");
         }
 
-        return jwtUtil.generateToken(user.getId(), user.getRole());
+        return jwtUtil.generateToken(user.getId(), user.getName(), user.getRole());
     }
 }

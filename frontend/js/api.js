@@ -237,19 +237,26 @@ function toast(message, { error = false } = {}) {
 function renderNav(mountEl, active) {
   const role = Session.role();
   const loggedIn = Session.isLoggedIn();
+  const payload = Session.payload();
+  const userName = payload?.name || "User";
+
   mountEl.innerHTML = `
     <a class="brand" href="index.html">
       ${dialSvg()}
       <span>FONEBOOK<small>clique directory</small></span>
     </a>
     <div class="navlinks">
-      <a href="index.html" ${active === "browse" ? 'style="color:var(--brass-light);border-color:var(--brass);"' : ""}>Browse</a>
+    
+      
+      
       ${
         loggedIn
           ? `
-          <span class="pill-role">${role === "ADMIN" ? "Admin" : "Manager"}</span>
+          <span style="font-family:var(--font-mono);font-size:13px;color:var(--paper-dim);">${userName}</span>
+          <span class="pill-role">${role === "ADMIN" ? "(Admin)" : "(Manager)"}</span>
           ${role === "MANAGER" ? `<a href="dashboard.html" ${active === "dashboard" ? 'style="color:var(--brass-light);border-color:var(--brass);"' : ""}>Dashboard</a>` : ""}
           ${role === "ADMIN" ? `<a href="admin.html" ${active === "admin" ? 'style="color:var(--brass-light);border-color:var(--brass);"' : ""}>Admin</a>` : ""}
+          
           <button id="logoutBtn">Sign out</button>
         `
           : `<a href="login.html" ${active === "login" ? 'style="color:var(--brass-light);border-color:var(--brass);"' : ""}>Sign in</a>`
