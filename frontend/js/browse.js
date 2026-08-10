@@ -53,7 +53,7 @@ function renderTabs(query) {
   rolodexEl.innerHTML = cliques
     .map(
       (c, i) => `
-      <button class="tab" role="tab" data-id="${c.id}" style="--tab-color:${TAB_COLORS[i % 2]}" aria-selected="${c.id === activeId}">
+      <button class="tab" role="tab" data-id="${c.id}" style="--tab-color:${TAB_COLORS[i % 2]};opacity:0;transform:translateX(-16px);" aria-selected="${c.id === activeId}">
         <span class="dot"></span>
         <span>${escapeHtml(c.name)}</span>
         <span class="count" id="count-${c.id}">${contactsCache[c.id] ? contactsCache[c.id].length : ""}</span>
@@ -125,7 +125,7 @@ function renderCards(contacts) {
   cardgridEl.innerHTML = contacts
     .map(
       (c) => `
-    <article class="icard">
+    <article class="icard" style="opacity:0;transform:translateY(14px);">
       <h3>${escapeHtml(c.name)}</h3>
       <p class="phone">${escapeHtml(c.phoneNumber)}</p>
       <p class="notes">${escapeHtml(c.notes) || "&nbsp;"}</p>

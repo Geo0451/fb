@@ -240,6 +240,13 @@ button {
 /* ============================================================
    HERO (index.html)
    ============================================================ */
+.hero {
+  padding: clamp(40px, 8vw, 90px) clamp(20px, 5vw, 56px) clamp(30px, 5vw, 60px);
+  display: grid;
+  grid-template-columns: 1.3fr 1fr;
+  gap: 40px;
+  align-items: end;
+}
 .hero h1 {
   font-family: var(--font-display);
   font-weight: 900;
@@ -259,12 +266,28 @@ button {
   max-width: 46ch;
   margin: 18px 0 0;
 }
+.hero-side {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--paper-dim);
+  border-left: 1px solid var(--ink-line);
+  padding-left: 22px;
+  line-height: 1.7;
+}
 .hero-side b {
   color: var(--brass-light);
   font-weight: 600;
 }
 
 @media (max-width: 840px) {
+  .hero {
+    grid-template-columns: 1fr;
+  }
+  .hero-side {
+    border-left: none;
+    border-top: 1px solid var(--ink-line);
+    padding: 18px 0 0;
+  }
 }
 
 /* ============================================================
@@ -272,7 +295,6 @@ button {
    ============================================================ */
 .directory {
   padding: 0 clamp(20px, 5vw, 56px) 80px;
-
   display: grid;
   grid-template-columns: 260px 1fr;
   gap: 0;
@@ -282,6 +304,31 @@ button {
   .directory {
     grid-template-columns: 1fr;
   }
+}
+
+.rolodex-col {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.clique-search {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  background: var(--ink-soft);
+  border: 1px solid var(--ink-line);
+  color: var(--paper);
+  padding: 10px 14px;
+  border-radius: var(--radius);
+  width: 100%;
+}
+.clique-search::placeholder {
+  color: var(--paper-dim);
+}
+.clique-search:focus {
+  border-color: var(--brass);
+}
+.clique-search:disabled {
+  opacity: 0.5;
 }
 
 .rolodex {
@@ -297,17 +344,6 @@ button {
     border-bottom: 1px solid var(--ink-line);
     padding-bottom: 2px;
   }
-}
-
-.clique-search {
-  font-family: var(--font-mono);
-  font-size: 13px;
-  border: 1px solid var(--paper-line);
-  background: #fff;
-  padding: 9px 14px;
-  border-radius: var(--radius);
-  margin: 16px;
-  color: var(--ink);
 }
 
 .tab {
@@ -740,6 +776,46 @@ button {
   margin-bottom: 0;
   flex: 1;
   min-width: 140px;
+}
+
+.dir-toolbar {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+.dir-toolbar input {
+  flex: 1;
+  font-family: var(--font-body);
+  font-size: 14px;
+  padding: 10px 13px;
+  border: 1px solid var(--paper-line);
+  border-radius: var(--radius);
+  background: #fff;
+  color: var(--ink);
+}
+.dir-toolbar input:focus {
+  border-color: var(--teal);
+}
+
+.tbl .actions {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.tbl .idcell {
+  font-family: var(--font-mono);
+  color: var(--teal);
+}
+.local-tag {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.04em;
+  color: var(--brass-dim);
+  border: 1px solid var(--paper-line);
+  border-radius: 20px;
+  padding: 2px 8px;
+  display: inline-block;
+  margin-bottom: 12px;
 }
 
 /* Table used in admin for cliques */
