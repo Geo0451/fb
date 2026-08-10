@@ -114,7 +114,10 @@ async function request(path, { method = "GET", body, auth = false } = {}) {
 const Api = {
   // auth
   login(email, password) {
-    return request("/api/auth/login", { method: "POST", body: { email, password } });
+    return request("/api/auth/login", {
+      method: "POST",
+      body: { email, password },
+    });
   },
 
   // cliques
@@ -123,7 +126,11 @@ const Api = {
     return request(`/api/cliques${qs}`);
   },
   createClique(name, description) {
-    return request("/api/admin/cliques", { method: "POST", auth: true, body: { name, description } });
+    return request("/api/admin/cliques", {
+      method: "POST",
+      auth: true,
+      body: { name, description },
+    });
   },
 
   // contacts
@@ -131,13 +138,24 @@ const Api = {
     return request(`/api/contacts/clique/${cliqueId}`);
   },
   createContact({ cliqueId, name, phoneNumber, notes }) {
-    return request("/api/contacts", { method: "POST", auth: true, body: { cliqueId, name, phoneNumber, notes } });
+    return request("/api/contacts", {
+      method: "POST",
+      auth: true,
+      body: { cliqueId, name, phoneNumber, notes },
+    });
   },
   updateContact(contactId, { cliqueId, name, phoneNumber, notes }) {
-    return request(`/api/contacts/${contactId}`, { method: "PUT", auth: true, body: { cliqueId, name, phoneNumber, notes } });
+    return request(`/api/contacts/${contactId}`, {
+      method: "PUT",
+      auth: true,
+      body: { cliqueId, name, phoneNumber, notes },
+    });
   },
   deleteContact(contactId) {
-    return request(`/api/contacts/${contactId}`, { method: "DELETE", auth: true });
+    return request(`/api/contacts/${contactId}`, {
+      method: "DELETE",
+      auth: true,
+    });
   },
 
   // admin
@@ -146,16 +164,31 @@ const Api = {
     return request(`/api/managers${qs}`, { auth: true });
   },
   createManager(name, email, password) {
-    return request("/api/admin/managers", { method: "POST", auth: true, body: { name, email, password } });
+    return request("/api/admin/managers", {
+      method: "POST",
+      auth: true,
+      body: { name, email, password },
+    });
   },
   deleteManager(managerId) {
-    return request(`/api/admin/managers/${managerId}`, { method: "DELETE", auth: true });
+    return request(`/api/admin/managers/${managerId}`, {
+      method: "DELETE",
+      auth: true,
+    });
   },
   assignClique(managerId, cliqueId) {
-    return request("/api/admin/assign-clique", { method: "POST", auth: true, body: { managerId, cliqueId } });
+    return request("/api/admin/assign-clique", {
+      method: "POST",
+      auth: true,
+      body: { managerId, cliqueId },
+    });
   },
   removeClique(managerId, cliqueId) {
-    return request("/api/admin/remove-clique", { method: "POST", auth: true, body: { managerId, cliqueId } });
+    return request("/api/admin/remove-clique", {
+      method: "POST",
+      auth: true,
+      body: { managerId, cliqueId },
+    });
   },
 };
 
@@ -176,13 +209,23 @@ function toast(message, { error = false } = {}) {
   stack.appendChild(el);
 
   import("https://cdn.jsdelivr.net/npm/motion@11/+esm").then(({ animate }) => {
-    animate(el, { opacity: [0, 1], x: [24, 0] }, { duration: 0.35, easing: "ease-out" });
+    animate(
+      el,
+      { opacity: [0, 1], x: [24, 0] },
+      { duration: 0.35, easing: "ease-out" },
+    );
   });
 
   setTimeout(() => {
-    import("https://cdn.jsdelivr.net/npm/motion@11/+esm").then(({ animate }) => {
-      animate(el, { opacity: [1, 0], x: [0, 24] }, { duration: 0.3, easing: "ease-in" }).finished.then(() => el.remove());
-    });
+    import("https://cdn.jsdelivr.net/npm/motion@11/+esm").then(
+      ({ animate }) => {
+        animate(
+          el,
+          { opacity: [1, 0], x: [0, 24] },
+          { duration: 0.3, easing: "ease-in" },
+        ).finished.then(() => el.remove());
+      },
+    );
   }, 3600);
 }
 
@@ -197,15 +240,16 @@ function renderNav(mountEl, active) {
       <span>FONEBOOK<small>clique directory</small></span>
     </a>
     <div class="navlinks">
-      <a href="index.html" ${active === "browse" ? 'style="color:var(--brass-light);border-color:var(--brass);"' : ""}>Browse</a>
-      ${loggedIn
-        ? `
-          <span class="pill-role">${role === "ADMIN" ? "Admin" : "Manager"}</span>
+      
+      ${
+        loggedIn
+          ? `
+          <span class="pill-role">${role === "ADMIN" ? "(Admin)" : "(Manager)"}</span>
           ${role === "MANAGER" ? `<a href="dashboard.html" ${active === "dashboard" ? 'style="color:var(--brass-light);border-color:var(--brass);"' : ""}>Dashboard</a>` : ""}
           ${role === "ADMIN" ? `<a href="admin.html" ${active === "admin" ? 'style="color:var(--brass-light);border-color:var(--brass);"' : ""}>Admin</a>` : ""}
           <button id="logoutBtn">Sign out</button>
         `
-        : `<a href="login.html" ${active === "login" ? 'style="color:var(--brass-light);border-color:var(--brass);"' : ""}>Sign in</a>`
+          : `<a href="login.html" ${active === "login" ? 'style="color:var(--brass-light);border-color:var(--brass);"' : ""}>Sign in</a>`
       }
     </div>
   `;
