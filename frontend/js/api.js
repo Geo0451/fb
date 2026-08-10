@@ -265,6 +265,18 @@ function renderNav(mountEl, active) {
   `;
   const logoutBtn = mountEl.querySelector("#logoutBtn");
   if (logoutBtn) logoutBtn.addEventListener("click", () => Session.logout());
+
+  // manually restart the spin on click too, in case the brand link
+  // ever stops causing a full page reload (e.g. same-page click)
+  const brandEl = mountEl.querySelector(".brand");
+  const dialEl = brandEl?.querySelector(".dial");
+  if (brandEl && dialEl) {
+    brandEl.addEventListener("click", () => {
+      dialEl.style.animation = "none";
+      void dialEl.offsetWidth; // force reflow to allow the animation to restart
+      dialEl.style.animation = "";
+    });
+  }
 }
 
 function dialSvg() {

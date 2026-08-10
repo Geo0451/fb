@@ -109,6 +109,18 @@ button {
   width: 34px;
   height: 34px;
   flex-shrink: 0;
+  transform-origin: 50% 50%;
+  animation: dial-spin 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+@keyframes dial-spin {
+  from {
+    transform: rotate(-160deg);
+    opacity: 0;
+  }
+  to {
+    transform: rotate(0deg);
+    opacity: 1;
+  }
 }
 .brand small {
   display: block;
@@ -285,6 +297,17 @@ button {
     border-bottom: 1px solid var(--ink-line);
     padding-bottom: 2px;
   }
+}
+
+.clique-search {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  border: 1px solid var(--paper-line);
+  background: #fff;
+  padding: 9px 14px;
+  border-radius: var(--radius);
+  margin: 16px;
+  color: var(--ink);
 }
 
 .tab {
