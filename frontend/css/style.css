@@ -319,7 +319,8 @@ button {
   color: var(--paper);
   padding: 10px 14px;
   border-radius: var(--radius);
-  width: 100%;
+  width: calc(100%-16px);
+  margin-right: 16px;
 }
 .clique-search::placeholder {
   color: var(--paper-dim);
@@ -331,6 +332,14 @@ button {
   opacity: 0.5;
 }
 
+.pill-name {
+  font-family: var(--font-mono);
+
+  letter-spacing: 0.04em;
+  color: var(--brass);
+
+  display: inline-block;
+}
 .rolodex {
   display: flex;
   flex-direction: column;

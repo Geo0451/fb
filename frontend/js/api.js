@@ -244,6 +244,7 @@ function renderNav(mountEl, active) {
       ${
         loggedIn
           ? `
+          <span class="pill-name">${Session.payload()?.name ?? "Unknown"}</span>
           <span class="pill-role">${role === "ADMIN" ? "(Admin)" : "(Manager)"}</span>
           ${role === "MANAGER" ? `<a href="dashboard.html" ${active === "dashboard" ? 'style="color:var(--brass-light);border-color:var(--brass);"' : ""}>Dashboard</a>` : ""}
           ${role === "ADMIN" ? `<a href="admin.html" ${active === "admin" ? 'style="color:var(--brass-light);border-color:var(--brass);"' : ""}>Admin</a>` : ""}
