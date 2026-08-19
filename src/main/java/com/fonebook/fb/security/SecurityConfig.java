@@ -49,7 +49,8 @@ public SecurityFilterChain filterChain(HttpSecurity http, JwtAuthFilter jwtAuthF
             "http://localhost:*",
             "http://127.0.0.1:*",
             "https://localhost:*",
-            "https://127.0.0.1:*"
+            "https://127.0.0.1:*",
+            "https://*.vercel.app"
         ));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("Authorization", "Content-Type", "Accept"));
