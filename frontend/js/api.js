@@ -3,7 +3,7 @@
 // Talks to the Fonebook backend described in the API reference.
 // ============================================================
 
-const API_BASE = "https://fb-umber-one.vercel.app/";
+const API_BASE = "https://fb-lu8v.onrender.com/";
 
 const TOKEN_KEY = "fonebook_token";
 
