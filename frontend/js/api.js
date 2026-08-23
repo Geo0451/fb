@@ -3,7 +3,7 @@
 // Talks to the Fonebook backend described in the API reference.
 // ============================================================
 
-const API_BASE = "https://fb-lu8v.onrender.com";
+const API_BASE = "http://127.0.0.1:8000";
 
 const TOKEN_KEY = "fonebook_token";
 
