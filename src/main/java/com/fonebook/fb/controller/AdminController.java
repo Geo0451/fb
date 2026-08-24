@@ -56,4 +56,10 @@ public class AdminController {
     public Clique createClique(@RequestBody CreateCliqueRequest request) {
         return adminService.createClique(request.getName(), request.getDescription());
     }
+
+    @DeleteMapping("/delete-clique")
+    public void deleteClique(@RequestBody AssignCliqueRequest request) {
+        adminService.deleteClique(request.getCliqueId());
+    }
+    
 }

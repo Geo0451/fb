@@ -1,98 +1,169 @@
 <!doctype html>
 <html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Admin — Fonebook</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;700;800;900&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=optional" rel="stylesheet">
-<link rel="icon" type="image/svg+xml" href="favicon.svg">
-<link rel="stylesheet" href="css/style.css">
-</head>
-<body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin — Fonebook</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;700;800;900&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=optional"
+      rel="stylesheet"
+    />
+    <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <nav class="topnav" id="nav"></nav>
 
-<nav class="topnav" id="nav"></nav>
+    <main class="shell">
+      <h1>Admin console</h1>
+      <p class="lede">
+        Create managers and cliques, and control who manages what.
+      </p>
 
-<main class="shell">
-  <h1>Admin console</h1>
-  <p class="lede">Create managers and cliques, and control who manages what.</p>
+      <div class="panel-grid">
+        <section class="panel">
+          <h2>New clique</h2>
+          <p class="panel-sub">
+            Cliques are public the moment they're created.
+          </p>
+          <form id="cliqueForm">
+            <div class="field">
+              <label for="qName">Name</label><input id="qName" required />
+            </div>
+            <div class="field">
+              <label for="qDesc">Description</label><input id="qDesc" />
+            </div>
+            <button
+              class="btn btn-brass btn-block"
+              type="submit"
+              id="cliqueBtn"
+            >
+              Create clique
+            </button>
+          </form>
+          <div class="formerr" id="cliqueErr"></div>
+        </section>
 
-  <div class="panel-grid">
-    <section class="panel">
-      <h2>New clique</h2>
-      <p class="panel-sub">Cliques are public the moment they're created.</p>
-      <form id="cliqueForm">
-        <div class="field"><label for="qName">Name</label><input id="qName" required></div>
-        <div class="field"><label for="qDesc">Description</label><input id="qDesc"></div>
-        <button class="btn btn-brass btn-block" type="submit" id="cliqueBtn">Create clique</button>
-      </form>
-      <div class="formerr" id="cliqueErr"></div>
-    </section>
-
-    <section class="panel">
-      <h2>New manager</h2>
-      <p class="panel-sub">They'll sign in with this email and password.</p>
-      <form id="managerForm">
-        <div class="field"><label for="mName">Name</label><input id="mName" required></div>
-        <div class="field"><label for="mEmail">Email</label><input id="mEmail" type="email" required></div>
-        <div class="field"><label for="mPass">Password</label><input id="mPass" type="password" required></div>
-        <button class="btn btn-brass btn-block" type="submit" id="managerBtn">Create manager</button>
-      </form>
-      <div class="formerr" id="managerErr"></div>
-    </section>
-  </div>
-
-  <section class="panel">
-    <h2>Clique access</h2>
-    <p class="panel-sub">Assign or remove a manager's access to a clique. Look their ID up in the directory below, or type one in directly.</p>
-    <form id="accessForm" class="inline-form">
-      <div class="field">
-        <label for="aManagerId">Manager ID</label>
-        <input id="aManagerId" type="number" min="1" required>
+        <section class="panel">
+          <h2>New manager</h2>
+          <p class="panel-sub">They'll sign in with this email and password.</p>
+          <form id="managerForm">
+            <div class="field">
+              <label for="mName">Name</label><input id="mName" required />
+            </div>
+            <div class="field">
+              <label for="mEmail">Email</label
+              ><input id="mEmail" type="email" required />
+            </div>
+            <div class="field">
+              <label for="mPass">Password</label
+              ><input id="mPass" type="password" required />
+            </div>
+            <button
+              class="btn btn-brass btn-block"
+              type="submit"
+              id="managerBtn"
+            >
+              Create manager
+            </button>
+          </form>
+          <div class="formerr" id="managerErr"></div>
+        </section>
       </div>
-      <div class="field">
-        <label for="aCliqueId">Clique</label>
-        <select id="aCliqueId" required></select>
-      </div>
-      <button class="btn btn-brass" type="submit" data-mode="assign">Assign</button>
-      <button class="btn btn-outline on-paper" type="submit" data-mode="remove">Remove</button>
-    </form>
-    <div class="formerr" id="accessErr"></div>
-  </section>
 
-  <section class="panel">
-    <h2>Delete manager</h2>
-    <p class="panel-sub">Permanent — the manager loses access immediately.</p>
-    <form id="deleteForm" class="inline-form">
-      <div class="field">
-        <label for="dManagerId">Manager ID</label>
-        <input id="dManagerId" type="number" min="1" required>
-      </div>
-      <button class="btn btn-rose" type="submit">Delete manager</button>
-    </form>
-    <div class="formerr" id="deleteErr"></div>
-  </section>
+      <section class="panel">
+        <h2>Clique access</h2>
+        <p class="panel-sub">
+          Assign or remove a manager's access to a clique. Look their ID up in
+          the directory below, or type one in directly.
+        </p>
+        <form id="accessForm" class="inline-form">
+          <div class="field">
+            <label for="aManagerId">Manager ID</label>
+            <input id="aManagerId" type="number" min="1" required />
+          </div>
+          <div class="field">
+            <label for="aCliqueId">Clique</label>
+            <select id="aCliqueId" required></select>
+          </div>
+          <button class="btn btn-brass" type="submit" data-mode="assign">
+            Assign
+          </button>
+          <button
+            class="btn btn-outline on-paper"
+            type="submit"
+            data-mode="remove"
+          >
+            Remove
+          </button>
+        </form>
+        <div class="formerr" id="accessErr"></div>
+      </section>
 
-  <section class="panel">
-    <h2>Manager directory</h2>
-    <p class="panel-sub">Search by name — matching is server-side. A pure number searches by ID within the current results.</p>
+      <section class="panel">
+        <h2>Delete clique</h2>
+        <p class="panel-sub">
+          Permanent — contacts are kept but unlinked from this clique.
+        </p>
+        <form id="deleteCliqueForm" class="inline-form">
+          <div class="field">
+            <label for="dCliqueId">Clique ID</label>
+            <input id="dCliqueId" type="number" min="1" required />
+          </div>
+          <button class="btn btn-rose" type="submit">Delete clique</button>
+        </form>
+        <div class="formerr" id="deleteCliqueErr"></div>
+      </section>
 
-    <div class="dir-toolbar">
-      <input id="dirSearch" type="search" placeholder="Search by name or ID…">
-    </div>
-    <div id="directoryTable"></div>
-  </section>
+      <section class="panel">
+        <h2>Delete manager</h2>
+        <p class="panel-sub">
+          Permanent — the manager loses access immediately.
+        </p>
+        <form id="deleteForm" class="inline-form">
+          <div class="field">
+            <label for="dManagerId">Manager ID</label>
+            <input id="dManagerId" type="number" min="1" required />
+          </div>
+          <button class="btn btn-rose" type="submit">Delete manager</button>
+        </form>
+        <div class="formerr" id="deleteErr"></div>
+      </section>
 
-  <section class="panel">
-    <h2>Recent activity</h2>
-    <p class="panel-sub">Cliques created and access changes this session — cleared when you leave the page.</p>
-    <div id="sessionLog">
-      <div class="empty-state"><strong>Nothing yet</strong>Create a clique or change access above to see it here.</div>
-    </div>
-  </section>
-</main>
+      <section class="panel">
+        <h2>Manager directory</h2>
+        <p class="panel-sub">
+          Search by name — matching is server-side. A pure number searches by ID
+          within the current results.
+        </p>
 
-<script src="js/api.js"></script>
-<script type="module" src="js/admin.js"></script>
-</body>
+        <div class="dir-toolbar">
+          <input
+            id="dirSearch"
+            type="search"
+            placeholder="Search by name or ID…"
+          />
+        </div>
+        <div id="directoryTable"></div>
+      </section>
+
+      <section class="panel">
+        <h2>Recent activity</h2>
+        <p class="panel-sub">
+          Cliques created and access changes this session — cleared when you
+          leave the page.
+        </p>
+        <div id="sessionLog">
+          <div class="empty-state">
+            <strong>Nothing yet</strong>Create a clique or change access above
+            to see it here.
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script src="js/api.js"></script>
+    <script type="module" src="js/admin.js"></script>
+  </body>
 </html>

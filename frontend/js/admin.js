@@ -17,6 +17,8 @@ const cliqueSelect = document.getElementById("aCliqueId");
 
 const deleteForm = document.getElementById("deleteForm");
 const deleteErr = document.getElementById("deleteErr");
+const deleteCliqueForm = document.getElementById("deleteCliqueForm");
+const deleteCliqueErr = document.getElementById("deleteCliqueErr");
 
 const sessionLogEl = document.getElementById("sessionLog");
 const dirSearchEl = document.getElementById("dirSearch");
@@ -27,7 +29,13 @@ let cliqueOptions = [];
 let lastManagerResults = [];
 
 function escapeHtml(s) {
-  return (s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  return (s ?? "").replace(
+    /[&<>"']/g,
+    (c) =>
+      ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[
+        c
+      ],
+  );
 }
 
 function pushLog(tag, text) {
@@ -41,10 +49,14 @@ function renderLog() {
     return;
   }
   sessionLogEl.innerHTML = logEntries
-    .map((e, i) => `<div class="log-row"${i === 0 ? ' style="opacity:0;transform:translateX(-10px);"' : ""}><span>${e.text}</span><span class="tag">${e.tag}</span></div>`)
+    .map(
+      (e, i) =>
+        `<div class="log-row"${i === 0 ? ' style="opacity:0;transform:translateX(-10px);"' : ""}><span>${e.text}</span><span class="tag">${e.tag}</span></div>`,
+    )
     .join("");
   const rows = sessionLogEl.querySelectorAll(".log-row");
-  if (rows[0]) animate(rows[0], { opacity: [0, 1], x: [-10, 0] }, { duration: 0.3 });
+  if (rows[0])
+    animate(rows[0], { opacity: [0, 1], x: [-10, 0] }, { duration: 0.3 });
 }
 
 /* ---------- manager directory, now backed by GET /api/admin/managers ---------- */
@@ -83,7 +95,7 @@ function renderDirectory(query) {
               <button class="btn btn-outline on-paper btn-sm" data-use-access="${m.id}">Use for access</button>
               <button class="btn btn-outline on-paper btn-sm" data-use-delete="${m.id}">Use for delete</button>
             </td>
-          </tr>`
+          </tr>`,
           )
           .join("")}
       </tbody>
@@ -94,15 +106,19 @@ function renderDirectory(query) {
     b.addEventListener("click", () => {
       document.getElementById("aManagerId").value = b.dataset.useAccess;
       document.getElementById("aManagerId").focus();
-      document.getElementById("accessForm").scrollIntoView({ behavior: "smooth", block: "center" });
-    })
+      document
+        .getElementById("accessForm")
+        .scrollIntoView({ behavior: "smooth", block: "center" });
+    }),
   );
   directoryTableEl.querySelectorAll("[data-use-delete]").forEach((b) =>
     b.addEventListener("click", () => {
       document.getElementById("dManagerId").value = b.dataset.useDelete;
       document.getElementById("dManagerId").focus();
-      document.getElementById("deleteForm").scrollIntoView({ behavior: "smooth", block: "center" });
-    })
+      document
+        .getElementById("deleteForm")
+        .scrollIntoView({ behavior: "smooth", block: "center" });
+    }),
   );
 }
 
@@ -129,7 +145,12 @@ dirSearchEl.addEventListener("input", () => {
 async function loadCliqueOptions() {
   try {
     cliqueOptions = await Api.listCliques();
-    cliqueSelect.innerHTML = cliqueOptions.map((c) => `<option value="${c.id}">${escapeHtml(c.name)} (#${c.id})</option>`).join("");
+    cliqueSelect.innerHTML = cliqueOptions
+      .map(
+        (c) =>
+          `<option value="${c.id}">${escapeHtml(c.name)} (#${c.id})</option>`,
+      )
+      .join("");
   } catch {
     cliqueSelect.innerHTML = `<option value="">Couldn't load cliques</option>`;
   }
@@ -169,7 +190,10 @@ managerForm.addEventListener("submit", async (e) => {
     const email = document.getElementById("mEmail").value.trim();
     const password = document.getElementById("mPass").value;
     const manager = await Api.createManager(name, email, password);
-    pushLog("manager", `${manager.name} (${manager.email}) — id #${manager.id}`);
+    pushLog(
+      "manager",
+      `${manager.name} (${manager.email}) — id #${manager.id}`,
+    );
     toast(`Manager ${manager.name} created — id #${manager.id}.`);
     document.getElementById("aManagerId").value = manager.id;
     managerForm.reset();
@@ -190,7 +214,8 @@ accessForm.addEventListener("submit", async (e) => {
   const mode = e.submitter?.dataset.mode || "assign";
   const managerId = Number(document.getElementById("aManagerId").value);
   const cliqueId = Number(cliqueSelect.value);
-  const cliqueName = cliqueOptions.find((c) => c.id === cliqueId)?.name || `#${cliqueId}`;
+  const cliqueName =
+    cliqueOptions.find((c) => c.id === cliqueId)?.name || `#${cliqueId}`;
 
   const btn = e.submitter;
   const originalText = btn.textContent;
@@ -208,7 +233,10 @@ accessForm.addEventListener("submit", async (e) => {
       pushLog("access", `manager #${managerId} → removed from “${cliqueName}”`);
     }
   } catch (err) {
-    accessErr.textContent = err.status === 404 ? "That manager or clique ID doesn't exist." : err.message;
+    accessErr.textContent =
+      err.status === 404
+        ? "That manager or clique ID doesn't exist."
+        : err.message;
     accessErr.classList.add("show");
   } finally {
     btn.disabled = false;
@@ -232,11 +260,37 @@ deleteForm.addEventListener("submit", async (e) => {
     deleteForm.reset();
     loadManagers(dirSearchEl.value.trim() || undefined);
   } catch (err) {
-    deleteErr.textContent = err.status === 404 ? "That manager ID doesn't exist." : err.message;
+    deleteErr.textContent =
+      err.status === 404 ? "That manager ID doesn't exist." : err.message;
     deleteErr.classList.add("show");
   } finally {
     btn.disabled = false;
     btn.textContent = "Delete manager";
+  }
+});
+
+deleteCliqueForm.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  deleteCliqueErr.classList.remove("show");
+  const cliqueId = Number(document.getElementById("dCliqueId").value);
+  if (!confirm(`Delete clique #${cliqueId}? This can't be undone.`)) return;
+
+  const btn = deleteCliqueForm.querySelector("button");
+  btn.disabled = true;
+  btn.textContent = "Deleting…";
+  try {
+    await Api.deleteClique(cliqueId);
+    toast(`Clique #${cliqueId} deleted.`);
+    pushLog("clique", `clique #${cliqueId} — deleted`);
+    deleteCliqueForm.reset();
+    loadCliqueOptions();
+  } catch (err) {
+    deleteCliqueErr.textContent =
+      err.status === 404 ? "That clique ID doesn't exist." : err.message;
+    deleteCliqueErr.classList.add("show");
+  } finally {
+    btn.disabled = false;
+    btn.textContent = "Delete clique";
   }
 });
 

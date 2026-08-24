@@ -190,6 +190,13 @@ const Api = {
       body: { managerId, cliqueId },
     });
   },
+  deleteClique(cliqueId) {
+    return request("/api/admin/delete-clique", {
+      method: "DELETE",
+      auth: true,
+      body: { cliqueId },
+    });
+  },
 };
 
 /* ---------- toast ---------- */

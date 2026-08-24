@@ -80,4 +80,18 @@ public class AdminService {
         clique.setDescription(description);
         return cliqueRepository.save(clique);
     }
+
+    @Transactional
+    public void deleteClique(Long cliqueId) {
+        if (!cliqueRepository.existsById(cliqueId)) {
+            throw new IllegalArgumentException("Clique not found with id: " + cliqueId);
+        }
+
+        contactRepository.unlinkFromClique(cliqueId);
+        List<User> managers = userRepository.findByManagedCliques_Id(cliqueId);
+        managers.forEach(manager -> manager.getManagedCliques()
+            .removeIf(clique -> clique.getId().equals(cliqueId)));
+        userRepository.saveAll(managers);
+        cliqueRepository.deleteById(cliqueId);
+    }
 }

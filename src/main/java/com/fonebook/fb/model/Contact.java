@@ -31,7 +31,7 @@ public class Contact {
 
     
     @ManyToOne
-    @JoinColumn(name = "clique_id")
+    @JoinColumn(name = "clique_id", nullable = true)
     private Clique clique;
 
     @ManyToOne
