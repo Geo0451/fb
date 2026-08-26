@@ -2,7 +2,6 @@ package com.fonebook.fb.controller;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -33,10 +32,10 @@ public class UserController {
         return userService.getAllUsers();
     }
     @GetMapping("/{managerId}/cliques")
-public List<Clique> getManagerCliques(@PathVariable Long managerId) {
-    User manager = userService.findById(managerId)
-        .orElseThrow(() -> new IllegalArgumentException("Manager not found"));
-    return new ArrayList<>(manager.getManagedCliques());  // convert Set to List
+    public List<Clique> getManagerCliques(@PathVariable Long managerId) {
+        User manager = userService.findById(managerId)
+            .orElseThrow(() -> new IllegalArgumentException("Manager not found"));
+        return new ArrayList<>(manager.getManagedCliques());  // convert Set to List
 }
 
     

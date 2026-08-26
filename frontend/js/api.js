@@ -132,6 +132,10 @@ const Api = {
       body: { name, description },
     });
   },
+  listManagerCliques(managerId, name) {
+    const qs = name ? `?name=${encodeURIComponent(name)}` : "";
+    return request(`/api/managers/${managerId}/cliques${qs}`, { auth: true });
+  },
 
   // contacts
   listContacts(cliqueId) {
