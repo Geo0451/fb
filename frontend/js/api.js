@@ -3,7 +3,7 @@
 // Talks to the Fonebook backend described in the API reference.
 // ============================================================
 
-const API_BASE = "https://fb-lu8v.onrender.com";
+const API_BASE = import.meta.env.VITE_API_BASE_URL || "http://localhost:8080";
 
 const TOKEN_KEY = "fonebook_token";
 
@@ -219,7 +219,7 @@ function toast(message, { error = false } = {}) {
   el.style.transform = "translateX(24px)";
   stack.appendChild(el);
 
-  import("https://cdn.jsdelivr.net/npm/motion@11/+esm").then(({ animate }) => {
+  import("motion").then(({ animate }) => {
     animate(
       el,
       { opacity: [0, 1], x: [24, 0] },
@@ -228,15 +228,13 @@ function toast(message, { error = false } = {}) {
   });
 
   setTimeout(() => {
-    import("https://cdn.jsdelivr.net/npm/motion@11/+esm").then(
-      ({ animate }) => {
-        animate(
-          el,
-          { opacity: [1, 0], x: [0, 24] },
-          { duration: 0.3, easing: "ease-in" },
-        ).finished.then(() => el.remove());
-      },
-    );
+    import("motion").then(({ animate }) => {
+      animate(
+        el,
+        { opacity: [1, 0], x: [0, 24] },
+        { duration: 0.3, easing: "ease-in" },
+      ).finished.then(() => el.remove());
+    });
   }, 3600);
 }
 
@@ -311,3 +309,5 @@ function requireRole(...roles) {
     window.location.href = "login.html";
   }
 }
+
+export { Api, Session, ApiError, toast, renderNav, requireRole, debounce };

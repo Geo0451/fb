@@ -1,4 +1,5 @@
-import { animate, stagger } from "https://cdn.jsdelivr.net/npm/motion@11/+esm";
+import { animate, stagger } from "motion";
+import { Api, toast, renderNav, requireRole, debounce } from "./api.js";
 
 requireRole("ADMIN");
 renderNav(document.getElementById("nav"), "admin");

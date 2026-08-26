@@ -1,7 +1,7 @@
 // main.js
 // Logic for index.html — the public browsing page. No auth involved anywhere here.
 
-import { animate, stagger } from "https://cdn.jsdelivr.net/npm/motion@11/+esm";
+import { animate, stagger } from "motion";
 
 // Each clique gets one of these accent colors, cycling in order, based on its
 // position in the list. This is just a JS array mapped to id -> color, so the
@@ -34,7 +34,8 @@ function renderCliqueTabs() {
 
 function makeTab(label, cliqueId, color) {
   const button = document.createElement("button");
-  button.className = "clique-tab" + (activeCliqueId === cliqueId ? " active" : "");
+  button.className =
+    "clique-tab" + (activeCliqueId === cliqueId ? " active" : "");
   button.textContent = label;
   if (activeCliqueId === cliqueId) {
     button.style.background = color;
@@ -50,7 +51,9 @@ function makeTab(label, cliqueId, color) {
 
 function contactCardHTML(contact) {
   const color = accentFor(contact.clique.id);
-  const notes = contact.notes ? `<p class="contact-notes">${escapeHtml(contact.notes)}</p>` : "";
+  const notes = contact.notes
+    ? `<p class="contact-notes">${escapeHtml(contact.notes)}</p>`
+    : "";
   return `
     <div class="contact-card" style="--tab-color: ${color}">
       <span class="contact-clique-label" style="background:${color}">${escapeHtml(contact.clique.name)}</span>
@@ -76,7 +79,7 @@ async function loadAndRenderContacts() {
     if (activeCliqueId === null) {
       // "All" view: fetch every clique's contacts and flatten them together.
       const perClique = await Promise.all(
-        allCliques.map((c) => api.getContactsForClique(c.id))
+        allCliques.map((c) => api.getContactsForClique(c.id)),
       );
       contacts = perClique.flat();
     } else {
@@ -88,7 +91,7 @@ async function loadAndRenderContacts() {
       contacts = contacts.filter(
         (c) =>
           c.name.toLowerCase().includes(query) ||
-          c.phoneNumber.toLowerCase().includes(query)
+          c.phoneNumber.toLowerCase().includes(query),
       );
     }
 
@@ -116,8 +119,14 @@ function animateCardsIn() {
 
   animate(
     cards,
-    { opacity: [0, 1], transform: ["translateY(16px) rotate(0deg)", "translateY(0px) rotate(var(--rest-tilt))"] },
-    { duration: 0.4, delay: stagger(0.04) }
+    {
+      opacity: [0, 1],
+      transform: [
+        "translateY(16px) rotate(0deg)",
+        "translateY(0px) rotate(var(--rest-tilt))",
+      ],
+    },
+    { duration: 0.4, delay: stagger(0.04) },
   );
 }
 

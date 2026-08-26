@@ -1,4 +1,5 @@
-import { animate, stagger } from "https://cdn.jsdelivr.net/npm/motion@11/+esm";
+import { animate, stagger } from "motion";
+import { Api, renderNav, debounce } from "./api.js";
 
 renderNav(document.getElementById("nav"), "browse");
 
@@ -18,7 +19,13 @@ let currentContacts = [];
 const TAB_COLORS = ["var(--brass)", "var(--teal-light)"];
 
 function escapeHtml(s) {
-  return (s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  return (s ?? "").replace(
+    /[&<>"']/g,
+    (c) =>
+      ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[
+        c
+      ],
+  );
 }
 
 async function init() {
@@ -57,7 +64,7 @@ function renderTabs(query) {
         <span class="dot"></span>
         <span>${escapeHtml(c.name)}</span>
         <span class="count" id="count-${c.id}">${contactsCache[c.id] ? contactsCache[c.id].length : ""}</span>
-      </button>`
+      </button>`,
     )
     .join("");
 
@@ -65,7 +72,11 @@ function renderTabs(query) {
     tab.addEventListener("click", () => selectClique(Number(tab.dataset.id)));
   });
 
-  animate(rolodexEl.querySelectorAll(".tab"), { opacity: [0, 1], x: [-16, 0] }, { delay: stagger(0.05), duration: 0.35, easing: "ease-out" });
+  animate(
+    rolodexEl.querySelectorAll(".tab"),
+    { opacity: [0, 1], x: [-16, 0] },
+    { delay: stagger(0.05), duration: 0.35, easing: "ease-out" },
+  );
 
   // keep the current clique selected across a search if it's still in the results;
   // otherwise fall back to the top result.
@@ -75,7 +86,9 @@ function renderTabs(query) {
 }
 
 const runCliqueSearch = debounce((q) => loadCliques(q || undefined), 300);
-cliqueSearchEl.addEventListener("input", () => runCliqueSearch(cliqueSearchEl.value.trim()));
+cliqueSearchEl.addEventListener("input", () =>
+  runCliqueSearch(cliqueSearchEl.value.trim()),
+);
 
 async function selectClique(id, { skipFlip = false } = {}) {
   activeId = id;
@@ -86,7 +99,11 @@ async function selectClique(id, { skipFlip = false } = {}) {
   });
 
   if (!skipFlip) {
-    await animate(stageEl, { rotateY: [0, -6], opacity: [1, 0.4] }, { duration: 0.18, easing: "ease-in" }).finished;
+    await animate(
+      stageEl,
+      { rotateY: [0, -6], opacity: [1, 0.4] },
+      { duration: 0.18, easing: "ease-in" },
+    ).finished;
   }
 
   titleEl.textContent = clique.name;
@@ -108,7 +125,11 @@ async function selectClique(id, { skipFlip = false } = {}) {
     cardgridEl.innerHTML = `<div class="empty-state"><strong>Couldn't load contacts</strong>${escapeHtml(err.message)}</div>`;
   }
 
-  animate(stageEl, { rotateY: [-6, 0], opacity: [0.4, 1] }, { duration: 0.22, easing: "ease-out" });
+  animate(
+    stageEl,
+    { rotateY: [-6, 0], opacity: [0.4, 1] },
+    { duration: 0.22, easing: "ease-out" },
+  );
 }
 
 function skeletons() {
@@ -133,17 +154,25 @@ function renderCards(contacts) {
         <span>added by ${escapeHtml(c.addedBy?.name || "—")}</span>
         <span>${formatDate(c.timestamp)}</span>
       </div>
-    </article>`
+    </article>`,
     )
     .join("");
 
-  animate(cardgridEl.querySelectorAll(".icard"), { opacity: [0, 1], y: [14, 0] }, { delay: stagger(0.045), duration: 0.4, easing: "ease-out" });
+  animate(
+    cardgridEl.querySelectorAll(".icard"),
+    { opacity: [0, 1], y: [14, 0] },
+    { delay: stagger(0.045), duration: 0.4, easing: "ease-out" },
+  );
 }
 
 function formatDate(ts) {
   if (!ts) return "";
   try {
-    return new Date(ts).toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" });
+    return new Date(ts).toLocaleDateString(undefined, {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+    });
   } catch {
     return "";
   }
@@ -156,7 +185,9 @@ searchEl.addEventListener("input", () => {
     return;
   }
   const filtered = currentContacts.filter(
-    (c) => c.name.toLowerCase().includes(q) || c.phoneNumber.toLowerCase().includes(q)
+    (c) =>
+      c.name.toLowerCase().includes(q) ||
+      c.phoneNumber.toLowerCase().includes(q),
   );
   renderCards(filtered);
 });
