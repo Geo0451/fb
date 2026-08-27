@@ -28,6 +28,178 @@ function escapeHtml(s) {
   );
 }
 
+/* ============================================================
+   CONTACT FOCUS — "picked up" close-up view.
+   Uses the native View Transitions API: the browser morphs the
+   grid card into the focused card (position, size, crossfade)
+   as a single compositor-driven animation. No manual FLIP math,
+   no hand-sequenced crossfades.
+   ============================================================ */
+
+let focusedContactId = null;
+let focusEls = null; // { backdrop, focus, cardEl }
+
+function buildFocusMarkup(c) {
+  return `
+    <h3>${escapeHtml(c.name)}</h3>
+    <p class="phone">${escapeHtml(c.phoneNumber)}</p>
+    <p class="notes">${escapeHtml(c.notes) || "&nbsp;"}</p>
+    <div class="meta">
+      <span>added by ${escapeHtml(c.addedBy?.name || "—")}</span>
+      <span>${formatDate(c.timestamp)}</span>
+    </div>`;
+}
+
+function openContactFocus(cardEl, contact) {
+  if (focusedContactId != null) return;
+  focusedContactId = contact.id;
+  const sourceRect = cardEl.getBoundingClientRect();
+  const sourceParent = cardEl.parentElement;
+  const sourceStyle = cardEl.getAttribute("style");
+
+  const placeholder = document.createElement("div");
+  placeholder.className = "icard-placeholder";
+  placeholder.setAttribute("aria-hidden", "true");
+  placeholder.style.height = `${sourceRect.height}px`;
+  sourceParent.insertBefore(placeholder, cardEl);
+
+  const backdrop = document.createElement("div");
+  backdrop.className = "card-backdrop";
+  backdrop.addEventListener("click", closeContactFocus);
+
+  const focus = cardEl;
+  focus.classList.add("icard-focus", "is-compact");
+  focus.setAttribute("role", "dialog");
+  focus.setAttribute("aria-modal", "true");
+
+  document.body.appendChild(backdrop);
+  document.body.appendChild(focus);
+  document.body.style.overflow = "hidden";
+  focus.style.removeProperty("opacity");
+  focus.style.removeProperty("transform");
+
+  const targetWidth = Math.min(460, window.innerWidth * 0.9);
+  focus.classList.remove("is-compact");
+  focus.style.width = `${targetWidth}px`;
+  const expandedHeight = Math.min(focus.scrollHeight, window.innerHeight - 32);
+  focus.classList.add("is-compact");
+  const targetRect = {
+    left: (window.innerWidth - targetWidth) / 2,
+    top: (window.innerHeight - expandedHeight) / 2,
+    width: targetWidth,
+    height: expandedHeight,
+  };
+  focus.style.left = `${sourceRect.left}px`;
+  focus.style.top = `${sourceRect.top}px`;
+  focus.style.width = `${sourceRect.width}px`;
+  focus.style.height = `${sourceRect.height}px`;
+  focus.style.transform = "none";
+
+  focusEls = {
+    backdrop,
+    focus,
+    cardEl,
+    sourceRect,
+    sourceParent,
+    placeholder,
+    sourceStyle,
+  };
+  document.addEventListener("keydown", onFocusKeydown);
+  requestAnimationFrame(() => {
+    backdrop.classList.add("is-opening");
+    focus.classList.remove("is-compact");
+    focus.animate(
+      [
+        {
+          left: `${sourceRect.left}px`,
+          top: `${sourceRect.top}px`,
+          width: `${sourceRect.width}px`,
+          height: `${sourceRect.height}px`,
+          opacity: 1,
+        },
+        {
+          left: `${targetRect.left}px`,
+          top: `${targetRect.top}px`,
+          width: `${targetRect.width}px`,
+          height: `${targetRect.height}px`,
+          opacity: 1,
+        },
+      ],
+      {
+        duration: 520,
+        easing: "cubic-bezier(0.22, 1, 0.36, 1)",
+        fill: "forwards",
+      },
+    );
+    setTimeout(() => {
+      if (focusEls?.focus !== focus) return;
+      focus.style.left = `${targetRect.left}px`;
+      focus.style.top = `${targetRect.top}px`;
+      focus.style.width = `${targetRect.width}px`;
+      focus.style.height = `${targetRect.height}px`;
+      focus.classList.add("is-settled");
+    }, 540);
+  });
+}
+
+function closeContactFocus() {
+  if (focusedContactId == null || !focusEls) return;
+  const els = focusEls;
+  const focusRect = els.focus.getBoundingClientRect();
+  els.backdrop.classList.replace("is-opening", "is-closing");
+  els.focus.getAnimations().forEach((animation) => animation.cancel());
+  const sourceRect = els.sourceRect;
+  els.focus.classList.remove("is-settled");
+  els.focus.classList.add("is-compact");
+  els.focus.animate(
+    [
+      {
+        left: `${focusRect.left}px`,
+        top: `${focusRect.top}px`,
+        width: `${focusRect.width}px`,
+        height: `${focusRect.height}px`,
+        opacity: 1,
+      },
+      {
+        left: `${sourceRect.left}px`,
+        top: `${sourceRect.top}px`,
+        width: `${sourceRect.width}px`,
+        height: `${sourceRect.height}px`,
+        opacity: 0,
+      },
+    ],
+    {
+      duration: 420,
+      easing: "cubic-bezier(0.22, 1, 0.36, 1)",
+      fill: "forwards",
+    },
+  );
+
+  document.removeEventListener("keydown", onFocusKeydown);
+  setTimeout(() => {
+    if (focusEls !== els) return;
+    els.backdrop.remove();
+    els.focus.getAnimations().forEach((animation) => animation.cancel());
+    els.focus.className = "icard";
+    if (els.sourceStyle == null) {
+      els.focus.removeAttribute("style");
+    } else {
+      els.focus.setAttribute("style", els.sourceStyle);
+    }
+    els.focus.removeAttribute("role");
+    els.focus.removeAttribute("aria-modal");
+    els.sourceParent.insertBefore(els.focus, els.placeholder);
+    els.placeholder.remove();
+    document.body.style.overflow = "";
+    focusedContactId = null;
+    focusEls = null;
+  }, 440);
+}
+
+function onFocusKeydown(e) {
+  if (e.key === "Escape") closeContactFocus();
+}
+
 async function init() {
   cliqueSearchEl.disabled = true;
   rolodexEl.innerHTML = `<div class="rolodex-empty">Fetching cliques…</div>`;
@@ -163,6 +335,12 @@ function renderCards(contacts) {
     { opacity: [0, 1], y: [14, 0] },
     { delay: stagger(0.045), duration: 0.4, easing: "ease-out" },
   );
+
+  cardgridEl.querySelectorAll(".icard").forEach((cardEl, i) => {
+    cardEl.addEventListener("click", () =>
+      openContactFocus(cardEl, contacts[i]),
+    );
+  });
 }
 
 function formatDate(ts) {

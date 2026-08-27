@@ -117,20 +117,19 @@
       </section>
 
       <section class="panel">
-        <h2>Search Clique</h2>
+        <h2>Clique Directory</h2>
         <p class="panel-sub">
           Search by name — matching is server-side. A pure number searches by ID
           within the current results.
         </p>
-        <form id="searchCliqueForm" class="inline-form">
-          <div class="field">
-            <label for="sCliqueQuery">Search</label>
-            <input id="sCliqueQuery" type="text" required />
-          </div>
-          <button class="btn btn-brass" type="submit">Search</button>
-        </form>
-        <div class="formerr" id="searchCliqueErr"></div>
-        <div id="searchCliqueResults"></div>
+        <div class="dir-toolbar">
+          <input
+            id="cliqueDirSearch"
+            type="search"
+            placeholder="Search by name or ID…"
+          />
+        </div>
+        <div id="cliqueDirectoryTable"></div>
       </section>
 
       <section class="panel">
