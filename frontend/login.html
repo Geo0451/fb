@@ -1,39 +1,57 @@
 <!doctype html>
 <html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Sign in — Fonebook</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;700;800;900&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=optional" rel="stylesheet">
-<link rel="icon" type="image/svg+xml" href="favicon.svg">
-<link rel="stylesheet" href="css/style.css">
-</head>
-<body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sign in — Fonebook</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;700;800;900&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=optional"
+      rel="stylesheet"
+    />
+    <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <nav class="topnav" id="nav"></nav>
 
-<nav class="topnav" id="nav"></nav>
+    <main class="authwrap">
+      <form class="authcard" id="loginForm" novalidate>
+        <h1>Sign in</h1>
+        <p class="sub">
+          Managers &amp; admins only — contacts stay public without an account.
+        </p>
 
-<main class="authwrap">
-  <form class="authcard" id="loginForm" novalidate>
-    <h1>Sign in</h1>
-    <p class="sub">Managers &amp; admins only — contacts stay public without an account.</p>
+        <div class="formerr" id="formErr"></div>
 
-    <div class="formerr" id="formErr"></div>
+        <div class="field">
+          <label for="email">Email</label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            autocomplete="username"
+            required
+          />
+        </div>
+        <div class="field">
+          <label for="password">Password</label>
+          <input
+            type="password"
+            id="password"
+            name="password"
+            autocomplete="current-password"
+            required
+          />
+        </div>
 
-    <div class="field">
-      <label for="email">Email</label>
-      <input type="email" id="email" name="email" autocomplete="username" required>
-    </div>
-    <div class="field">
-      <label for="password">Password</label>
-      <input type="password" id="password" name="password" autocomplete="current-password" required>
-    </div>
+        <button class="btn btn-brass btn-block" type="submit" id="submitBtn">
+          Sign in
+        </button>
+      </form>
+    </main>
 
-    <button class="btn btn-brass btn-block" type="submit" id="submitBtn">Sign in</button>
-  </form>
-</main>
-
-<script type="module" src="js/api.js"></script>
-<script type="module" src="js/login.js"></script>
-</body>
+    <script type="module" src="js/api.js"></script>
+    <script type="module" src="js/login.js"></script>
+  </body>
 </html>

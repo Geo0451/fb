@@ -1,64 +1,91 @@
 <!doctype html>
 <html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dashboard — Fonebook</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;700;800;900&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=optional" rel="stylesheet">
-<link rel="icon" type="image/svg+xml" href="favicon.svg">
-<link rel="stylesheet" href="css/style.css">
-</head>
-<body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard — Fonebook</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;700;800;900&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=optional"
+      rel="stylesheet"
+    />
+    <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <nav class="topnav" id="nav"></nav>
 
-<nav class="topnav" id="nav"></nav>
+    <main class="shell">
+      <h1>Your desk</h1>
+      <p class="lede">Pick a clique, then add, edit, or remove its contacts.</p>
 
-<main class="shell">
-  <h1>Your desk</h1>
-  <p class="lede">Pick a clique, then add, edit, or remove its contacts.</p>
+      <input
+        class="clique-search"
+        id="cliqueSearch"
+        type="search"
+        placeholder="Find a clique…"
+        style="max-width: 320px; margin-bottom: 14px"
+        disabled
+      />
+      <div class="dash-tabs" id="cliqueTabs" role="tablist"></div>
 
-  <input class="clique-search" id="cliqueSearch" type="search" placeholder="Find a clique…" style="max-width:320px;margin-bottom:14px;" disabled>
-  <div class="dash-tabs" id="cliqueTabs" role="tablist"></div>
+      <section class="panel" id="addPanel" style="display: none">
+        <h2>Add a contact</h2>
+        <p class="panel-sub" id="addPanelSub"></p>
+        <form id="addForm" class="inline-form">
+          <div class="field">
+            <label for="cName">Name</label>
+            <input id="cName" required />
+          </div>
+          <div class="field">
+            <label for="cPhone">Phone number</label>
+            <input id="cPhone" required />
+          </div>
+          <div class="field" style="flex: 2">
+            <label for="cNotes">Notes</label>
+            <input id="cNotes" placeholder="optional" />
+          </div>
+          <button class="btn btn-brass" type="submit" id="addBtn">
+            Add contact
+          </button>
+        </form>
+        <div class="formerr" id="addErr"></div>
+      </section>
 
-  <section class="panel" id="addPanel" style="display:none;">
-    <h2>Add a contact</h2>
-    <p class="panel-sub" id="addPanelSub"></p>
-    <form id="addForm" class="inline-form">
-      <div class="field">
-        <label for="cName">Name</label>
-        <input id="cName" required>
-      </div>
-      <div class="field">
-        <label for="cPhone">Phone number</label>
-        <input id="cPhone" required>
-      </div>
-      <div class="field" style="flex:2;">
-        <label for="cNotes">Notes</label>
-        <input id="cNotes" placeholder="optional">
-      </div>
-      <button class="btn btn-brass" type="submit" id="addBtn">Add contact</button>
-    </form>
-    <div class="formerr" id="addErr"></div>
-  </section>
+      <section class="panel">
+        <h2 id="listTitle">Contacts</h2>
+        <p class="panel-sub" id="listSub"></p>
+        <div
+          class="cardgrid"
+          id="contactGrid"
+          style="background: transparent"
+        ></div>
+      </section>
+    </main>
 
-  <section class="panel">
-    <h2 id="listTitle">Contacts</h2>
-    <p class="panel-sub" id="listSub"></p>
-    <div class="cardgrid" id="contactGrid" style="background:transparent;"></div>
-  </section>
-</main>
+    <template id="editTpl">
+      <form class="inline-form editform">
+        <div class="field">
+          <label>Name</label><input class="e-name" required />
+        </div>
+        <div class="field">
+          <label>Phone</label><input class="e-phone" required />
+        </div>
+        <div class="field" style="flex: 2">
+          <label>Notes</label><input class="e-notes" />
+        </div>
+        <button class="btn btn-brass btn-sm" type="submit">Save</button>
+        <button
+          class="btn btn-outline on-paper btn-sm"
+          type="button"
+          data-action="cancel"
+        >
+          Cancel
+        </button>
+      </form>
+    </template>
 
-<template id="editTpl">
-  <form class="inline-form editform">
-    <div class="field"><label>Name</label><input class="e-name" required></div>
-    <div class="field"><label>Phone</label><input class="e-phone" required></div>
-    <div class="field" style="flex:2;"><label>Notes</label><input class="e-notes"></div>
-    <button class="btn btn-brass btn-sm" type="submit">Save</button>
-    <button class="btn btn-outline on-paper btn-sm" type="button" data-action="cancel">Cancel</button>
-  </form>
-</template>
-
-<script type="module" src="js/api.js"></script>
-<script type="module" src="js/dashboard.js"></script>
-</body>
+    <script type="module" src="js/api.js"></script>
+    <script type="module" src="js/dashboard.js"></script>
+  </body>
 </html>
